@@ -55,4 +55,6 @@ Consultar [ventas y demostración](docs/paso-9.md) para los perfiles, las prueba
 
 Consultar [validación final](docs/validacion-final.md) para los flujos probados y la recuperación de contraseña aún pendiente de correo real.
 
+Consultar [activación del correo de recuperación](docs/correo-recuperacion.md) para configurar SMTP sin compartir claves.
+
 Consultar [decisiones y etapas](docs/decisiones.md) antes de avanzar.
