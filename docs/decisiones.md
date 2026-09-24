@@ -14,7 +14,9 @@ Entrega: domingo 27 de septiembre de 2026. Un desarrollador.
 
 Paso 6 completado: estructura, dependencias, API de estado e interfaz de comprobación verificadas.
 
-Paso 7 completado técnicamente: modelo remoto, conexión local mediante session pooler, autenticación, dos cuentas ficticias con perfiles, políticas de acceso y pruebas de integración. Pendiente la revisión del usuario antes del Paso 8.
+Paso 7 verificado de nuevo: modelo remoto, conexión local mediante session pooler, autenticación, dos cuentas ficticias con perfiles, políticas de acceso y pruebas de integración. El usuario autorizó continuar directamente al Paso 8.
+
+Paso 8 implementado: API e interfaz de productos e inventario, saldo inicial, entradas, ajustes físicos justificados e historial. Producto de demostración PIN-001: S/ 25, stock 10 y mínimo 8. Ventas conserva su estructura de base de datos para la siguiente etapa; todavía no registra transacciones.
 
 ## Destino Supabase
 
@@ -34,8 +36,8 @@ Paso 7 completado técnicamente: modelo remoto, conexión local mediante session
 
 ## Siguientes etapas
 
-7. Base de datos, migraciones, autenticación y permisos: implementado, esperando revisión del usuario.
-8. Productos e inventario conectados.
+7. Base de datos, migraciones, autenticación y permisos: implementado y verificado.
+8. Productos e inventario conectados: implementado, esperando revisión del usuario.
 9. Venta transaccional e historiales.
 10. Pruebas de permisos, concurrencia, idempotencia y persistencia.
 11. Entrega reproducible.

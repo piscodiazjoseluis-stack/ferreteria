@@ -1,10 +1,10 @@
 # Ferretería y Matizados Miguel
 
-Primer avance universitario: venta registrada, actualización de existencias e historial verificable.
+Primer avance universitario: evolución del catálogo e inventario en Excel/cuaderno hacia una aplicación web con acceso por roles, datos persistentes e historial verificable. La venta transaccional es la siguiente etapa.
 
 ## Estado
 
-Paso 7: base de datos, conexión y acceso por perfiles implementados. Existen inicio/cierre de sesión y una pantalla de acceso confirmado. Los módulos comerciales se implementarán en las siguientes etapas.
+Pasos 7 y 8: acceso por perfiles, productos e inventario conectados a Supabase. El gerente mantiene el catálogo, registra entradas y ajustes físicos; el vendedor consulta. La pantalla de ventas identifica claramente que esa operación aún no está disponible.
 
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
 Las tablas antiguas se eliminaron con autorización y copia local previa. Las siete tablas nuevas están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
@@ -29,7 +29,7 @@ Set-Location 'C:\Users\USUARIO\Documents\ChatGPT\Software_ferreteria 2\frontend'
 npm.cmd run dev
 ```
 
-Abrir http://127.0.0.1:5173. Debe aparecer **Acceso al sistema**. Las cuentas de prueba están en `.artifacts/demo-accounts.json`, fuera de Git.
+Abrir http://127.0.0.1:5173. Debe aparecer la pantalla de acceso. Las cuentas de prueba están en `.artifacts/demo-accounts.json`, fuera de Git.
 Documentación de la API: http://127.0.0.1:8000/docs.
 Detener cada proceso con Ctrl+C en su terminal.
 
@@ -48,5 +48,7 @@ En backend: `.\.venv\Scripts\python.exe -m pip check`.
 La instalación actual tiene `backend/.env` y `frontend/.env` configurados. `.env.example` documenta las variables necesarias para otra instalación; nunca subir `.env` ni credenciales a Git.
 
 Consultar [base de datos y acceso](docs/paso-7.md) para migraciones, permisos y pruebas de integración.
+
+Consultar [productos e inventario](docs/paso-8.md) para las funciones disponibles y la prueba comercial.
 
 Consultar [decisiones y etapas](docs/decisiones.md) antes de avanzar.
