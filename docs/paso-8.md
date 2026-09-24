@@ -4,7 +4,7 @@
 
 El gerente inicia sesión, registra un producto con código, categoría, unidad, precio, mínimo y saldo inicial. El sistema crea la ficha y sus existencias en Supabase. Cada entrada y ajuste por cantidad física exige motivo y produce un movimiento con fecha, usuario, saldo anterior, variación y saldo nuevo. El vendedor consulta catálogo, existencias e historial, pero no puede modificar nada: FastAPI devuelve 403 aunque intente llamar directamente a los endpoints.
 
-El producto de muestra `PIN-001` es Pintura látex blanca 1 galón, precio **S/ 25**, mínimo **8** y stock actual **10**. Deja preparado el recorrido aprobado para la próxima etapa: vender 3 deberá cobrar S/ 75 y dejar stock 7, marcado como bajo. La venta aún no está implementada; la pantalla Ventas lo indica explícitamente.
+El producto de muestra `PIN-001` es Pintura látex blanca 1 galón, precio **S/ 25** y mínimo **8**. La venta de demostración de 3 unidades ya se registró por **S/ 75**: su stock pasó de 10 a 7, marcado como bajo. El stock puede cambiar con nuevas pruebas; consultar siempre la pantalla antes de ensayar.
 
 ## Ejecutar localmente
 

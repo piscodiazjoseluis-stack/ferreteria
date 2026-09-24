@@ -4,6 +4,10 @@ export type Profile = { id: string; nombre: string; rol: 'gerente' | 'vendedor';
 export type Category = { id: string; nombre: string }
 export type Product = { id: string; codigo: string; nombre: string; categoria_id: string; categoria: string; unidad_venta: string; precio_venta: number; stock_minimo: number; stock: number; activo: boolean; creado_en: string; actualizado_en: string }
 export type Movement = { id: string; producto_id: string; codigo: string; producto: string; tipo: string; variacion: number; stock_anterior: number; stock_resultante: number; motivo: string; fecha: string; usuario: string }
+export type SaleLine = { producto_id: string; codigo_producto: string; nombre_producto: string; unidad_venta: string; cantidad: number; precio_unitario: number; subtotal: number }
+export type SaleSummary = { id: string; numero: number; usuario_id: string; usuario: string; fecha: string; metodo_pago: string; total: number; lineas: number; unidades: number }
+export type SaleReceipt = Omit<SaleSummary, 'lineas' | 'unidades'> & { clave_idempotencia: string; items: SaleLine[] }
+export type SalesSummaryStats = { total_ventas: number; ventas_hoy: number; importe_hoy: number }
 
 export const money = (value: number) => new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(value)
 export const dateTime = (value: string) => new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(value))

@@ -16,7 +16,9 @@ Paso 6 completado: estructura, dependencias, API de estado e interfaz de comprob
 
 Paso 7 verificado de nuevo: modelo remoto, conexión local mediante session pooler, autenticación, dos cuentas ficticias con perfiles, políticas de acceso y pruebas de integración. El usuario autorizó continuar directamente al Paso 8.
 
-Paso 8 implementado: API e interfaz de productos e inventario, saldo inicial, entradas, ajustes físicos justificados e historial. Producto de demostración PIN-001: S/ 25, stock 10 y mínimo 8. Ventas conserva su estructura de base de datos para la siguiente etapa; todavía no registra transacciones.
+Paso 8 implementado: API e interfaz de productos e inventario, saldo inicial, entradas, ajustes físicos justificados e historial.
+
+Paso 9 implementado: ventas reales con precio del catálogo, bloqueo y descuento transaccional de existencias, comprobante, movimiento automático e idempotencia. Navegación y acciones diferenciadas: gerente supervisa todas las ventas, administra productos/precios y registra entradas/ajustes; vendedor abre en el punto de venta, consulta precios/stock y ve sus propias ventas. La recuperación por correo requiere validar entrega y redirección; aún no se declara comprobada de extremo a extremo.
 
 ## Destino Supabase
 
@@ -37,10 +39,10 @@ Paso 8 implementado: API e interfaz de productos e inventario, saldo inicial, en
 ## Siguientes etapas
 
 7. Base de datos, migraciones, autenticación y permisos: implementado y verificado.
-8. Productos e inventario conectados: implementado, esperando revisión del usuario.
-9. Venta transaccional e historiales.
+8. Productos e inventario conectados: implementado y comprobado en navegador.
+9. Venta transaccional e historiales: implementado y comprobado en navegador y API.
 10. Pruebas de permisos, concurrencia, idempotencia y persistencia.
 11. Entrega reproducible.
 12. Ensayo de demostración.
 
-Revisar cada etapa con el usuario antes de avanzar. El acceso local no elimina estas etapas.
+El usuario autorizó avanzar hasta una demostración clara para el domingo. Consultar `docs/paso-9.md` para el guion.

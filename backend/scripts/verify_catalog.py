@@ -75,7 +75,7 @@ if existing is None:
 history = client.get('/api/inventory/movements', headers=seller)
 assert history.status_code == 200, (history.status_code, history.text)
 mine = [m for m in history.json() if m['producto_id'] == product_id]
-assert mine and mine[0]['stock_resultante'] == 10
-assert client.get('/api/products', headers=manager).json()[0]['stock'] == 10
-print('PASS: historial visible, producto disponible con 10 unidades; venta futura de 3 dejará 7 (< mínimo 8)')
+current = next(p for p in client.get('/api/products', headers=manager).json() if p['id'] == product_id)
+assert mine and mine[0]['stock_resultante'] == current['stock']
+print('PASS: historial y existencias reales concuerdan tras las ventas posteriores')
 print('VERIFICACIÓN COMERCIAL COMPLETADA')

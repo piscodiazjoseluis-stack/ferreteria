@@ -1,10 +1,10 @@
 # Ferretería y Matizados Miguel
 
-Primer avance universitario: evolución del catálogo e inventario en Excel/cuaderno hacia una aplicación web con acceso por roles, datos persistentes e historial verificable. La venta transaccional es la siguiente etapa.
+Primer avance universitario: evolución del catálogo, inventario y ventas en Excel/cuaderno hacia una aplicación web con acceso por roles, datos persistentes e historial verificable.
 
 ## Estado
 
-Pasos 7 y 8: acceso por perfiles, productos e inventario conectados a Supabase. El gerente mantiene el catálogo, registra entradas y ajustes físicos; el vendedor consulta. La pantalla de ventas identifica claramente que esa operación aún no está disponible.
+Pasos 7 a 9: acceso por perfiles, productos, inventario y ventas al contado conectados a Supabase. El gerente mantiene productos, precios y existencias, y supervisa todas las ventas. El vendedor entra al punto de venta, consulta precios y stock, cobra y ve sus propias ventas. Cada venta guarda un comprobante y descuenta existencias automáticamente.
 
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
 Las tablas antiguas se eliminaron con autorización y copia local previa. Las siete tablas nuevas están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
@@ -50,5 +50,7 @@ La instalación actual tiene `backend/.env` y `frontend/.env` configurados. `.en
 Consultar [base de datos y acceso](docs/paso-7.md) para migraciones, permisos y pruebas de integración.
 
 Consultar [productos e inventario](docs/paso-8.md) para las funciones disponibles y la prueba comercial.
+
+Consultar [ventas y demostración](docs/paso-9.md) para los perfiles, las pruebas y un guion breve para el profesor.
 
 Consultar [decisiones y etapas](docs/decisiones.md) antes de avanzar.
