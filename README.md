@@ -53,4 +53,6 @@ Consultar [productos e inventario](docs/paso-8.md) para las funciones disponible
 
 Consultar [ventas y demostración](docs/paso-9.md) para los perfiles, las pruebas y un guion breve para el profesor.
 
+Consultar [validación final](docs/validacion-final.md) para los flujos probados y la recuperación de contraseña aún pendiente de correo real.
+
 Consultar [decisiones y etapas](docs/decisiones.md) antes de avanzar.
