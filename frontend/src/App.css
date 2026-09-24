@@ -1,0 +1,16 @@
+main { max-width: 760px; margin: 10vh auto; padding: 24px; }
+.eyebrow { color: #586860; font-size: 12px; letter-spacing: .12em; font-weight: 700; }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; letter-spacing: -.03em; }
+h2 { font-size: 19px; }
+section { background: white; border: 1px solid #dce3dd; border-radius: 12px; padding: 24px; margin: 32px 0; }
+a { color: #215e45; text-underline-offset: 4px; }
+a:focus-visible { outline: 3px solid #215e45; outline-offset: 5px; }
+.note { color: #5d6761; font-size: 14px; }
+form { display: grid; gap: 10px; max-width: 440px; padding: 28px; background: white; border: 1px solid #dce3dd; border-radius: 12px; margin-top: 28px; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; border: 1px solid #a2b2a8; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+button { font: inherit; background: #215e45; color: white; border: 0; padding: 10px 18px; border-radius: 6px; cursor: pointer; margin-right: 8px; }
+button:hover { background: #174432; }
+button:disabled { opacity: .6; cursor: wait; }
+button:focus-visible, input:focus-visible { outline: 3px solid #538268; outline-offset: 3px; }
+.error { color: #9c2626; }
