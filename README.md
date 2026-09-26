@@ -33,7 +33,7 @@ Abrir http://127.0.0.1:5173. Debe aparecer la pantalla de acceso. Las cuentas de
 Documentación de la API: http://127.0.0.1:8000/docs.
 Detener cada proceso con Ctrl+C en su terminal.
 
-El proxy de Vite reenvía `/api` a FastAPI. El estado comprueba comunicación local, no conexión con PostgreSQL. La configuración de producción se resolverá en la etapa de entrega.
+El proxy de Vite reenvía `/api` a FastAPI. El estado comprueba comunicación local, no conexión con PostgreSQL. Para el despliegue público, `vercel.json` enruta la interfaz y la API desde el mismo dominio; consultar [despliegue](docs/despliegue.md).
 
 ## Reinstalar dependencias si fuera necesario
 
