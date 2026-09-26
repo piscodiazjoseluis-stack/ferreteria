@@ -1,6 +1,6 @@
-# Activar el correo real de recuperación
+# Recuperación de contraseña por correo real
 
-La cuenta Gerente ya usa `gerente.ferreteria3@gmail.com`, pero el envío de correo aún depende de configurar SMTP personalizado en Supabase. La contraseña de inicio de sesión del software permanece intacta hasta que se complete un restablecimiento.
+La cuenta Gerente usa `gerente.ferreteria3@gmail.com`. El 25 de septiembre de 2026, José Luis confirmó que recibió el enlace en ese Gmail, cambió la contraseña y volvió a iniciar sesión. Los pasos de configuración siguientes quedan como referencia de mantenimiento; no hace falta repetirlos para considerar validado el flujo actual. La nueva contraseña del Gerente es privada y sustituye a la anterior.
 
 1. Entra personalmente a [Contraseñas de aplicación de Google](https://myaccount.google.com/apppasswords) con la cuenta Gmail que usarás como remitente. Si Google lo pide, activa primero la verificación en dos pasos. Crea una contraseña de aplicación llamada «Ferretería Supabase». **No uses ni compartas la contraseña normal de Gmail.** Introduce la contraseña de aplicación únicamente en el campo SMTP Password de Supabase; no la pegues en el chat ni en archivos del proyecto.
 2. En el proyecto [Ferreteria de Supabase](https://supabase.com/dashboard/project/lapzymfujekspcssruvn/auth/smtp), abre Authentication → Emails → SMTP Settings y habilita Custom SMTP. Para `smtp.gmail.com`, la [guía de Supabase](https://supabase.com/docs/guides/troubleshooting/using-google-smtp-with-supabase-custom-smtp-ZZzU4Y) admite los puertos 465 o 587. Usa como remitente y usuario SMTP el Gmail que creó la contraseña de aplicación, y como nombre «Ferretería Miguel». Guarda solo después de introducir la clave directamente en la consola.

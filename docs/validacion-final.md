@@ -11,10 +11,8 @@ Fecha de revisión: 24 de septiembre de 2026. Proyecto Supabase: `Ferreteria` (`
 - El Gerente pudo consultar los comprobantes del equipo. El Vendedor vio un menú y panel propios, pudo consultar precios y disponibilidad, y en «Mis ventas» solo aparecieron sus operaciones. Las pruebas de API confirmaron que no puede modificar productos o existencias ni consultar comprobantes ajenos.
 - Se revisó la interfaz de escritorio y móvil (390 × 844): navegación, tabla desplazable y formulario de producto. La consola del navegador no registró errores. Durante la carga inicial del catálogo y de ventas ahora se muestra un estado de espera, evitando métricas transitorias en cero.
 
-## Pendiente para cerrar esta etapa
+## Recuperación con correo real
 
-- **Correo real de recuperación:** el SMTP personalizado está desactivado en Supabase. El servicio integrado solo entrega correos a integrantes del proyecto; `gerente.ferreteria3@gmail.com` no está confirmado como tal. Se necesita configurar un proveedor SMTP con credenciales introducidas por el propietario en Supabase. No incorporar la cuenta Gmail al equipo de Supabase solo para recibir correos, pues eso ampliaría el acceso administrativo.
-- **Retorno del enlace:** la URL de retorno de la app local `http://127.0.0.1:5173/?recuperar=1` debe figurar en la lista permitida de Supabase Auth. La URL del sitio todavía apunta a `http://localhost:3000`.
-- **Prueba de extremo a extremo:** solicitar el enlace desde la app, verificar su llegada en Gmail, abrirlo, fijar personalmente una nueva contraseña y volver a iniciar sesión con ella. La nueva contraseña sustituirá a la que se conservó al cambiar el correo. No registrar la nueva clave en este repositorio ni enviarla por chat.
+El 25 de septiembre de 2026, José Luis comunicó que completó la prueba con `gerente.ferreteria3@gmail.com`: recibió el correo real, abrió el enlace, estableció una contraseña nueva y volvió a iniciar sesión. Por tanto, el flujo se puede presentar como **validado por el usuario de extremo a extremo**. La comprobación anterior de esta sección corresponde al 24 de septiembre; las observaciones de configuración pendientes de esa fecha quedaron superadas por la prueba del usuario. En esta revisión no se accedió al buzón ni se revalidó directamente la configuración SMTP.
 
-La etapa y el guion de exposición se cierran después de esa prueba con la cuenta real.
+La contraseña nueva reemplaza la anterior del Gerente. No se guarda en este repositorio ni se envía por chat. Antes de grabar la exposición, conviene probar en privado el acceso actual de Gerente y Vendedor y ocultar contraseñas y enlaces de recuperación de la grabación.

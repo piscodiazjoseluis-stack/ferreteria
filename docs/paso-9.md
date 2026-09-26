@@ -39,4 +39,4 @@ La prueba de ventas usa una clave fija para que repetirla no vuelva a descontar 
 5. Abrir **Disponibilidad**: el stock bajó una unidad y apareció el movimiento **Venta**. Abrir **Mis ventas**: solo aparece el historial propio.
 6. Volver a gerente y abrir **Ventas del negocio**: puede revisar la operación del vendedor y su comprobante. Esta es la mejora concreta frente a Excel: una operación registra simultáneamente cobro, historial y existencias, con permisos distintos.
 
-Las cuentas ficticias son para demostración. El restablecimiento de contraseña tiene interfaz y solicitud implementadas, pero la entrega del correo y el enlace de retorno aún requieren validación con una dirección autorizada en Supabase o un SMTP configurado. No presentarlo como una recuperación comprobada de extremo a extremo.
+Las cuentas ficticias son para demostración. El 25 de septiembre de 2026, José Luis confirmó que recibió el enlace de recuperación en el Gmail real del gerente, cambió la contraseña mediante ese enlace y volvió a iniciar sesión. Es una prueba de extremo a extremo realizada por el usuario; no se registra ni comparte la nueva contraseña.

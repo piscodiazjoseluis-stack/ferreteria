@@ -53,8 +53,10 @@ Consultar [productos e inventario](docs/paso-8.md) para las funciones disponible
 
 Consultar [ventas y demostración](docs/paso-9.md) para los perfiles, las pruebas y un guion breve para el profesor.
 
-Consultar [validación final](docs/validacion-final.md) para los flujos probados y la recuperación de contraseña aún pendiente de correo real.
+Consultar [validación final](docs/validacion-final.md) para los flujos probados y la recuperación de contraseña confirmada por el usuario con su Gmail real.
 
-Consultar [activación del correo de recuperación](docs/correo-recuperacion.md) para configurar SMTP sin compartir claves.
+Consultar [guía del correo de recuperación](docs/correo-recuperacion.md) para repetir la demostración o revisar la configuración sin compartir claves.
+
+Para la exposición del primer avance del 27 de septiembre de 2026, consultar la [presentación](entrega/Presentacion_MF_Primer_Avance_2026-09-27.pptx) y el [guion de demostración](entrega/Guion_exposicion_MF.md).
 
 Consultar [decisiones y etapas](docs/decisiones.md) antes de avanzar.

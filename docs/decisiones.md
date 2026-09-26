@@ -18,7 +18,7 @@ Paso 7 verificado de nuevo: modelo remoto, conexión local mediante session pool
 
 Paso 8 implementado: API e interfaz de productos e inventario, saldo inicial, entradas, ajustes físicos justificados e historial.
 
-Paso 9 implementado: ventas reales con precio del catálogo, bloqueo y descuento transaccional de existencias, comprobante, movimiento automático e idempotencia. Navegación y acciones diferenciadas: gerente supervisa todas las ventas, administra productos/precios y registra entradas/ajustes; vendedor abre en el punto de venta, consulta precios/stock y ve sus propias ventas. La recuperación por correo requiere validar entrega y redirección; aún no se declara comprobada de extremo a extremo.
+Paso 9 implementado: ventas reales con precio del catálogo, bloqueo y descuento transaccional de existencias, comprobante, movimiento automático e idempotencia. Navegación y acciones diferenciadas: gerente supervisa todas las ventas, administra productos/precios y registra entradas/ajustes; vendedor abre en el punto de venta, consulta precios/stock y ve sus propias ventas. El 25 de septiembre, José Luis comunicó que probó con el Gmail real del gerente la recepción del enlace de recuperación, el cambio de contraseña y un nuevo inicio de sesión. Esta validación de extremo a extremo fue realizada y reportada por el usuario; la nueva clave no se guarda en el proyecto.
 
 ## Destino Supabase
 
