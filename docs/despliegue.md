@@ -2,6 +2,12 @@
 
 El repositorio usa Vercel Services para servir Vite en `/` y FastAPI en `/api` desde un mismo dominio. La base de datos y la autenticación siguen en el proyecto Supabase `Ferreteria` (`lapzymfujekspcssruvn`). Ninguna contraseña ni URL de conexión privada se guarda en Git.
 
+**Dominio de producción:** https://ferreteria-gold.vercel.app/
+
+**Repositorio:** https://github.com/piscodiazjoseluis-stack/ferreteria
+
+El 25 de septiembre de 2026 se confirmó HTTP 200 en la portada, respuesta correcta de `/api/health`, autenticación del Vendedor mediante la API pública y carga de cuatro productos. También se abrió la interfaz pública con la sesión del Vendedor y se comprobó su menú de trabajo. El Gerente conserva la contraseña nueva establecida por el usuario mediante recuperación; esa clave no está disponible para las pruebas automatizadas de esta revisión. Las URL de retorno para el dominio público y la instalación local quedaron incluidas en Supabase Auth.
+
 ## Variables de Vercel
 
 Configurar en Production y Preview:
@@ -18,7 +24,7 @@ No configurar `MIGRATION_DATABASE_URL` en Vercel: el despliegue no ejecuta migra
 
 ## Autenticación en el dominio público
 
-Después de obtener el dominio definitivo de Vercel, añadir `https://DOMINIO/?recuperar=1` a las URL de redirección permitidas de Supabase Auth. El formulario genera esta URL desde el origen del navegador. Probar el enlace de recuperación en ese mismo dominio antes de grabar el video. Mantener también la URL local autorizada si se seguirá usando la instalación local.
+Supabase Auth tiene como Site URL `https://ferreteria-gold.vercel.app` y permite `https://ferreteria-gold.vercel.app/?recuperar=1` y `http://127.0.0.1:5173/?recuperar=1`. El formulario genera la URL de retorno desde el origen del navegador. José Luis ya confirmó el flujo completo con Gmail desde la instalación local; antes de grabar la recuperación en el dominio público, debe abrir el nuevo enlace recibido en ese mismo dominio y establecer personalmente la nueva contraseña.
 
 ## Comprobaciones
 

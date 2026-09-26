@@ -9,6 +9,8 @@ Pasos 7 a 9: acceso por perfiles, productos, inventario y ventas al contado cone
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
 Las tablas antiguas se eliminaron con autorización y copia local previa. Las siete tablas nuevas están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
 
+Versión pública para la exposición: [ferreteria-gold.vercel.app](https://ferreteria-gold.vercel.app/). La interfaz y la API se despliegan juntas desde este repositorio. Las credenciales de acceso se entregan en privado; no están en Git.
+
 ## Herramientas
 
 Configurado con Node.js 24.13.0 y Python 3.13. Dependencias frontend en package-lock.json y backend en requirements.txt.
