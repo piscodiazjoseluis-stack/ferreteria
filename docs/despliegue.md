@@ -36,3 +36,9 @@ Supabase Auth tiene como Site URL `https://ferreteria-gold.vercel.app` y permite
 6. Verificar recuperación de contraseña en el dominio público si se utilizará en la grabación.
 
 Las ventas y reposiciones cambian la base de datos compartida con la aplicación local. Comprobar existencias antes de cada toma.
+
+## Segunda versión (24 de octubre de 2026)
+
+La URL pública de la versión 2 es https://ferreteria-miguel-v2.vercel.app/. Se desplegó desde el checkout local al proyecto `ferreteria-miguel-v2` de Vercel. FastAPI y Vite usan el mismo dominio. Se configuraron en Production las variables del backend y las dos variables públicas `VITE_SUPABASE_*`; `DATABASE_URL` quedó como Secret. La URL de producción responde `/api/health` y se comprobó en navegador el acceso real de Almacén y Vendedor, una recepción y una venta. La URL de despliegue única exige autenticación de Vercel, pero el alias de producción se comprobó accesible sin esa protección.
+
+El repositorio GitHub citado arriba conserva todavía la primera versión: el commit local V2 no se pudo subir porque Git no tiene una sesión autenticada en este equipo. Antes de usar la recuperación de contraseña desde la nueva URL, añadir `https://ferreteria-miguel-v2.vercel.app/?recuperar=1` a las URL de redirección permitidas en Supabase Auth y comprobar el enlace recibido. Mantener la URL anterior para que la primera versión siga funcionando.

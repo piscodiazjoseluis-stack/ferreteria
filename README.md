@@ -6,12 +6,12 @@ Aplicación universitaria para pasar el catálogo, las existencias, las ventas y
 
 Primer avance: acceso por perfiles, productos, inventario y ventas al contado conectados a Supabase. El gerente mantiene productos, precios y existencias, y supervisa todas las ventas. El vendedor entra al punto de venta, consulta precios y stock, cobra y ve sus propias ventas. Cada venta guarda un comprobante y descuenta existencias automáticamente.
 
-Segunda versión en desarrollo: gerencia registra proveedores y pedidos, almacén cuenta y recibe la mercancía, y una recepción completa suma existencias con un movimiento asociado a cada línea del pedido. La supervisión muestra ventas del día y del mes, productos más vendidos y pedidos pendientes. Consulta [alcance y pruebas de la segunda versión](docs/version-2.md).
+Segunda versión implementada: gerencia registra proveedores y pedidos, almacén cuenta y recibe la mercancía, y una recepción completa suma existencias con un movimiento asociado a cada línea del pedido. La supervisión muestra ventas del día y del mes, productos más vendidos y pedidos pendientes. Consulta [alcance y pruebas de la segunda versión](docs/version-2.md).
 
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
 Las tablas antiguas se eliminaron con autorización y copia local previa. Las tablas comerciales están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
 
-Versión pública para la exposición: [ferreteria-gold.vercel.app](https://ferreteria-gold.vercel.app/). La interfaz y la API se despliegan juntas desde este repositorio. Las credenciales de acceso se entregan en privado; no están en Git.
+Segunda versión pública para la exposición: [ferreteria-miguel-v2.vercel.app](https://ferreteria-miguel-v2.vercel.app/). La versión anterior sigue en [ferreteria-gold.vercel.app](https://ferreteria-gold.vercel.app/). La interfaz y la API se despliegan juntas. El despliegue V2 se realizó desde el checkout local; falta sincronizar el commit con el repositorio de GitHub por la autenticación local de Git. Las credenciales de acceso no están en Git.
 
 ## Herramientas
 

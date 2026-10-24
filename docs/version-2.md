@@ -38,3 +38,9 @@ La entrada manual de inventario del Gerente permanece disponible para casos exce
 - Revisar escritorio y móvil en navegador, mensajes de carga, error y confirmación.
 
 Las migraciones de Supabase y la revisión `0003` de Alembic ya están alineadas. Antes de grabar la demostración, comprobar el estado publicado de GitHub/Vercel por separado y repetir el flujo con las cuentas reales del proyecto. No presentar una prueba técnica con identidad sustituida como si fuera un inicio de sesión real.
+
+## Verificación del 24 de octubre de 2026
+
+La cuenta real de prueba de Almacén ingresó en el navegador local y en la [versión 2 pública](https://ferreteria-miguel-v2.vercel.app/). El pedido #1 se recibió tras rechazar primero un conteo incorrecto. El stock del Foco LED 12 W pasó de 3 a 8 y quedó exactamente un movimiento de compra vinculado. Una repetición del POST de recepción devolvió 409 y no sumó stock de nuevo. Con un token real de Almacén, la API devolvió 403 al intentar consultar ventas o indicadores gerenciales y al intentar crear producto, proveedor o pedido; la respuesta del detalle no expuso costos. El acceso anónimo y un token inválido devolvieron 401.
+
+En producción, el Vendedor inició sesión y registró la venta de prueba #13 por S/ 19.00, con comprobante. La URL pública respondió 200 en `/api/health`. La prueba de gerencia sobre compras e indicadores se ejecutó con una identidad sustituida en TestClient, no con una sesión real, porque la contraseña de la cuenta de gerente fue modificada por su titular. La publicación V2 está lista en Vercel, pero el commit local aún no está en GitHub por falta de autenticación de Git en esta máquina.
