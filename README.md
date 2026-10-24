@@ -1,13 +1,15 @@
 # Ferretería y Matizados Miguel
 
-Primer avance universitario: evolución del catálogo, inventario y ventas en Excel/cuaderno hacia una aplicación web con acceso por roles, datos persistentes e historial verificable.
+Aplicación universitaria para pasar el catálogo, las existencias, las ventas y la reposición antes controlados parcialmente en Excel/cuaderno a un flujo web con roles, datos persistentes e historial verificable.
 
 ## Estado
 
-Pasos 7 a 9: acceso por perfiles, productos, inventario y ventas al contado conectados a Supabase. El gerente mantiene productos, precios y existencias, y supervisa todas las ventas. El vendedor entra al punto de venta, consulta precios y stock, cobra y ve sus propias ventas. Cada venta guarda un comprobante y descuenta existencias automáticamente.
+Primer avance: acceso por perfiles, productos, inventario y ventas al contado conectados a Supabase. El gerente mantiene productos, precios y existencias, y supervisa todas las ventas. El vendedor entra al punto de venta, consulta precios y stock, cobra y ve sus propias ventas. Cada venta guarda un comprobante y descuenta existencias automáticamente.
+
+Segunda versión en desarrollo: gerencia registra proveedores y pedidos, almacén cuenta y recibe la mercancía, y una recepción completa suma existencias con un movimiento asociado a cada línea del pedido. La supervisión muestra ventas del día y del mes, productos más vendidos y pedidos pendientes. Consulta [alcance y pruebas de la segunda versión](docs/version-2.md).
 
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
-Las tablas antiguas se eliminaron con autorización y copia local previa. Las siete tablas nuevas están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
+Las tablas antiguas se eliminaron con autorización y copia local previa. Las tablas comerciales están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
 
 Versión pública para la exposición: [ferreteria-gold.vercel.app](https://ferreteria-gold.vercel.app/). La interfaz y la API se despliegan juntas desde este repositorio. Las credenciales de acceso se entregan en privado; no están en Git.
 

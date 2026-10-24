@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from app.auth import Profile, current_profile
+from app.auth import Profile, require_sales_access
 from app.database import user_connection
 
 router = APIRouter(prefix='/api/sales', tags=['Ventas'])
@@ -60,7 +60,7 @@ def receipt(connection, sale_id: UUID, profile: Profile):
 
 
 @router.post('', status_code=201)
-def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(current_profile)]):
+def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(require_sales_access)]):
     fingerprint = request_hash(data)
     try:
         with user_connection(profile.id) as connection:
@@ -130,7 +130,7 @@ def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(current_p
 
 
 @router.get('')
-def list_sales(profile: Annotated[Profile, Depends(current_profile)]):
+def list_sales(profile: Annotated[Profile, Depends(require_sales_access)]):
     with user_connection(profile.id) as connection:
         rows = connection.execute(text('''
           SELECT v.id,v.numero,v.usuario_id,v.fecha,v.metodo_pago,v.total,
@@ -145,7 +145,7 @@ def list_sales(profile: Annotated[Profile, Depends(current_profile)]):
 
 
 @router.get('/summary')
-def sales_summary(profile: Annotated[Profile, Depends(current_profile)]):
+def sales_summary(profile: Annotated[Profile, Depends(require_sales_access)]):
     with user_connection(profile.id) as connection:
         row = connection.execute(text('''
           SELECT count(*) AS total_ventas,
@@ -160,6 +160,6 @@ def sales_summary(profile: Annotated[Profile, Depends(current_profile)]):
 
 
 @router.get('/{sale_id}')
-def get_sale(sale_id: UUID, profile: Annotated[Profile, Depends(current_profile)]):
+def get_sale(sale_id: UUID, profile: Annotated[Profile, Depends(require_sales_access)]):
     with user_connection(profile.id) as connection:
         return receipt(connection, sale_id, profile)
