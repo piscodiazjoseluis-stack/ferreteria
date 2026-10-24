@@ -63,4 +63,6 @@ Consultar [guía del correo de recuperación](docs/correo-recuperacion.md) para 
 
 Para la exposición del primer avance del 27 de septiembre de 2026, consultar la [presentación](entrega/Presentacion_MF_Primer_Avance_2026-09-27.pptx) y el [guion de demostración](entrega/Guion_exposicion_MF.md).
 
+Para mostrar la segunda versión, usar el [guion de demostración V2](entrega/Guion_exposicion_MF_V2.md), que recorre la venta, el pedido gerencial, la recepción de Almacén y la actualización del inventario.
+
 Consultar [decisiones y etapas](docs/decisiones.md) antes de avanzar.
