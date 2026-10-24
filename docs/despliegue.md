@@ -24,7 +24,7 @@ No configurar `MIGRATION_DATABASE_URL` en Vercel: el despliegue no ejecuta migra
 
 ## Autenticación en el dominio público
 
-Supabase Auth tiene como Site URL `https://ferreteria-gold.vercel.app` y permite las URL de recuperación de la primera versión, la instalación local y V2: `https://ferreteria-gold.vercel.app/?recuperar=1`, `http://127.0.0.1:5173/?recuperar=1` y `https://ferreteria-miguel-v2.vercel.app/?recuperar=1`. La tercera quedó visible y guardada en el panel de Supabase el 24 de octubre de 2026. El formulario genera la URL de retorno desde el origen del navegador. La solicitud de recuperación del Gerente desde V2 mostró confirmación en la aplicación; aún se requiere comprobar la recepción en Gmail, el cambio personal de contraseña y el nuevo inicio de sesión antes de declarar completo el flujo público.
+Supabase Auth tiene como Site URL `https://ferreteria-gold.vercel.app` y permite las URL de recuperación de la primera versión, la instalación local y V2: `https://ferreteria-gold.vercel.app/?recuperar=1`, `http://127.0.0.1:5173/?recuperar=1` y `https://ferreteria-miguel-v2.vercel.app/?recuperar=1`. La tercera quedó visible y guardada en el panel de Supabase el 24 de octubre de 2026. El formulario genera la URL de retorno desde el origen del navegador. La solicitud de recuperación del Gerente desde V2 mostró confirmación; el titular confirmó recepción en Gmail, cambio personal de contraseña e inicio de sesión posterior. Supabase Auth registró el último inicio de sesión del Gerente a las 06:11 del 24 de octubre de 2026 (hora mostrada por el panel). La nueva contraseña permanece solo en poder del titular.
 
 ## Comprobaciones
 
