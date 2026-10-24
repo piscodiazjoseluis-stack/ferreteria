@@ -11,7 +11,7 @@ Segunda versión implementada: gerencia registra proveedores y pedidos, almacén
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
 Las tablas antiguas se eliminaron con autorización y copia local previa. Las tablas comerciales están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
 
-Segunda versión pública para la exposición: [ferreteria-miguel-v2.vercel.app](https://ferreteria-miguel-v2.vercel.app/). La versión anterior sigue en [ferreteria-gold.vercel.app](https://ferreteria-gold.vercel.app/). La interfaz y la API se despliegan juntas. El despliegue V2 se realizó desde el checkout local; falta sincronizar el commit con el repositorio de GitHub por la autenticación local de Git. Las credenciales de acceso no están en Git.
+Segunda versión pública para la exposición: [ferreteria-miguel-v2.vercel.app](https://ferreteria-miguel-v2.vercel.app/). La versión anterior sigue en [ferreteria-gold.vercel.app](https://ferreteria-gold.vercel.app/). La interfaz y la API se despliegan juntas. El despliegue V2 se realizó desde el checkout local; el código V2 también está en `main` del repositorio de GitHub. Las credenciales de acceso no están en Git.
 
 ## Herramientas
 
