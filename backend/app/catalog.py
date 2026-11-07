@@ -5,7 +5,7 @@ from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
@@ -22,6 +22,13 @@ class ProductInput(BaseModel):
     unidad_venta: Literal['unidad', 'caja', 'bolsa', 'paquete', 'galon', 'balde']
     precio_venta: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
     stock_minimo: int = Field(ge=0, le=2_147_483_647)
+    stock_objetivo: int | None = Field(default=None, ge=0, le=2_147_483_647)
+
+    @model_validator(mode='after')
+    def valid_target(self):
+        if self.stock_objetivo is not None and self.stock_objetivo < self.stock_minimo:
+            raise ValueError('El stock objetivo debe ser mayor o igual al mínimo.')
+        return self
 
     @field_validator('codigo')
     @classmethod
@@ -76,7 +83,7 @@ class StockAdjustment(BaseModel):
 
 PRODUCT_QUERY = text('''
  SELECT p.id,p.codigo,p.nombre,p.categoria_id,c.nombre AS categoria,
-        p.unidad_venta,p.precio_venta,p.stock_minimo,p.activo,
+        p.unidad_venta,p.precio_venta,p.stock_minimo,p.stock_objetivo,p.activo,
         coalesce(e.cantidad,0) AS stock,p.creado_en,p.actualizado_en
  FROM ferreteria.productos p
  JOIN ferreteria.categorias c ON c.id=p.categoria_id
@@ -122,8 +129,8 @@ def create_product(data: ProductCreate, profile: Annotated[Profile, Depends(requ
             require_category(connection, data.categoria_id)
             product_id = connection.execute(text('''
               INSERT INTO ferreteria.productos
-                (codigo,nombre,categoria_id,unidad_venta,precio_venta,stock_minimo)
-              VALUES (:codigo,:nombre,:categoria_id,:unidad_venta,:precio_venta,:stock_minimo)
+                (codigo,nombre,categoria_id,unidad_venta,precio_venta,stock_minimo,stock_objetivo)
+              VALUES (:codigo,:nombre,:categoria_id,:unidad_venta,:precio_venta,:stock_minimo,coalesce(:stock_objetivo,:stock_minimo))
               RETURNING id
             '''), data.model_dump(exclude={'saldo_inicial'})).scalar_one()
             connection.execute(text('''
@@ -153,7 +160,7 @@ def update_product(product_id: UUID, data: ProductUpdate,
               UPDATE ferreteria.productos
               SET codigo=:codigo,nombre=:nombre,categoria_id=:categoria_id,
                   unidad_venta=:unidad_venta,precio_venta=:precio_venta,
-                  stock_minimo=:stock_minimo,activo=:activo
+                  stock_minimo=:stock_minimo,stock_objetivo=coalesce(:stock_objetivo,greatest(stock_objetivo,:stock_minimo)),activo=:activo
               WHERE id=:id RETURNING id
             '''), {'id': product_id, **data.model_dump()}).scalar_one_or_none()
             if updated is None:
@@ -216,7 +223,7 @@ def movements(profile: Annotated[Profile, Depends(current_profile)]):
         return [dict(row) for row in connection.execute(text('''
           SELECT m.id,m.producto_id,p.codigo,p.nombre AS producto,m.tipo,
                  m.variacion,m.stock_anterior,m.stock_resultante,m.motivo,m.fecha,
-                 CASE WHEN m.usuario_id=:user_id THEN :user_name ELSE 'Personal autorizado' END AS usuario
+                 m.usuario_nombre AS usuario
           FROM ferreteria.movimientos_inventario m
           JOIN ferreteria.productos p ON p.id=m.producto_id
           ORDER BY m.fecha DESC,m.id DESC LIMIT 200

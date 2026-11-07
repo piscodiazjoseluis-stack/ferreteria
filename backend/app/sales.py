@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.auth import Profile, require_sales_access
 from app.database import user_connection
+from app.cash import require_open_cash
 
 router = APIRouter(prefix='/api/sales', tags=['Ventas'])
 
@@ -45,7 +46,7 @@ def request_hash(data: SaleRequest) -> str:
 
 def receipt(connection, sale_id: UUID, profile: Profile):
     row = connection.execute(text('''
-      SELECT id,numero,usuario_id,fecha,metodo_pago,total,clave_idempotencia
+      SELECT id,numero,usuario_id,usuario_nombre,fecha,metodo_pago,total,clave_idempotencia
       FROM ferreteria.ventas WHERE id=:id
     '''), {'id': sale_id}).mappings().one_or_none()
     if row is None or (profile.rol == 'vendedor' and row['usuario_id'] != profile.id):
@@ -55,7 +56,7 @@ def receipt(connection, sale_id: UUID, profile: Profile):
              precio_unitario,subtotal
       FROM ferreteria.detalle_venta WHERE venta_id=:id ORDER BY codigo_producto
     '''), {'id': sale_id}).mappings().all()
-    return {**dict(row), 'usuario': profile.nombre if row['usuario_id'] == profile.id else 'Otro colaborador',
+    return {**dict(row), 'usuario': row['usuario_nombre'],
             'items': [dict(line) for line in lines]}
 
 
@@ -75,6 +76,7 @@ def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(require_s
                     raise HTTPException(409, 'Esta clave ya corresponde a una venta diferente.')
                 return receipt(connection, existing['id'], profile)
 
+            require_open_cash(connection)
             stock = {}
             for item in sorted(data.items, key=lambda line: str(line.producto_id)):
                 row = connection.execute(text('''
@@ -133,14 +135,14 @@ def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(require_s
 def list_sales(profile: Annotated[Profile, Depends(require_sales_access)]):
     with user_connection(profile.id) as connection:
         rows = connection.execute(text('''
-          SELECT v.id,v.numero,v.usuario_id,v.fecha,v.metodo_pago,v.total,
+          SELECT v.id,v.numero,v.usuario_id,v.usuario_nombre,v.fecha,v.metodo_pago,v.total,
                  count(d.id) AS lineas,coalesce(sum(d.cantidad),0) AS unidades
           FROM ferreteria.ventas v
           JOIN ferreteria.detalle_venta d ON d.venta_id=v.id
           WHERE (:manager OR v.usuario_id=:user_id)
           GROUP BY v.id ORDER BY v.fecha DESC,v.numero DESC LIMIT 100
         '''), {'manager': profile.rol == 'gerente', 'user_id': profile.id}).mappings()
-        return [{**dict(row), 'usuario': profile.nombre if row['usuario_id'] == profile.id else 'Otro colaborador'}
+        return [{**dict(row), 'usuario': row['usuario_nombre']}
                 for row in rows]
 
 

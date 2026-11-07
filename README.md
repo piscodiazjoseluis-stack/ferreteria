@@ -8,6 +8,8 @@ Primer avance: acceso por perfiles, productos, inventario y ventas al contado co
 
 Segunda versión implementada: gerencia registra proveedores y pedidos, almacén cuenta y recibe la mercancía, y una recepción completa suma existencias con un movimiento asociado a cada línea del pedido. La supervisión muestra ventas del día y del mes, productos más vendidos y pedidos pendientes. Consulta [alcance y pruebas de la segunda versión](docs/version-2.md).
 
+Tercera versión: reposición calculada con stock objetivo y pedidos pendientes; entregas parciales con historial e idempotencia; reportes por fechas con paginación y CSV completo; caja diaria con fondo, cobros por medio de pago, movimientos justificados y cierre inmutable. Gerencia debe abrir caja antes de vender. Consulta [reglas y validación de V3](docs/version-3.md).
+
 Proyecto Supabase confirmado: `Ferreteria`, referencia `lapzymfujekspcssruvn`.
 Las tablas antiguas se eliminaron con autorización y copia local previa. Las tablas comerciales están en el esquema privado `ferreteria`. LifeTrack queda fuera del alcance.
 

@@ -8,4 +8,5 @@
 !**/.env.example
 .artifacts/
 .vercel/
+supabase/.temp/
 *.log

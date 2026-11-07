@@ -1,4 +1,4 @@
-name: Desplegar Ferretería V2
+name: Desplegar Ferretería
 
 on:
   push:
@@ -20,6 +20,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verificar frontend antes de publicar
+        run: |
+          npm ci --prefix frontend
+          npm run lint --prefix frontend
+          npm run build --prefix frontend
       - name: Instalar Vercel CLI
         run: npm install --global vercel@latest
       - name: Publicar en el proyecto V2 existente

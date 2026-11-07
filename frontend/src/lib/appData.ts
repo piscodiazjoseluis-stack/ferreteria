@@ -2,15 +2,15 @@ import type { Session } from '@supabase/supabase-js'
 
 export type Profile = { id: string; nombre: string; rol: 'gerente' | 'vendedor' | 'almacenero'; activo: boolean }
 export type Category = { id: string; nombre: string }
-export type Product = { id: string; codigo: string; nombre: string; categoria_id: string; categoria: string; unidad_venta: string; precio_venta: number; stock_minimo: number; stock: number; activo: boolean; creado_en: string; actualizado_en: string }
+export type Product = { id: string; codigo: string; nombre: string; categoria_id: string; categoria: string; unidad_venta: string; precio_venta: number; stock_minimo: number; stock_objetivo: number; stock: number; activo: boolean; creado_en: string; actualizado_en: string }
 export type Movement = { id: string; producto_id: string; codigo: string; producto: string; tipo: string; variacion: number; stock_anterior: number; stock_resultante: number; motivo: string; fecha: string; usuario: string }
 export type SaleLine = { producto_id: string; codigo_producto: string; nombre_producto: string; unidad_venta: string; cantidad: number; precio_unitario: number; subtotal: number }
 export type SaleSummary = { id: string; numero: number; usuario_id: string; usuario: string; fecha: string; metodo_pago: string; total: number; lineas: number; unidades: number }
 export type SaleReceipt = Omit<SaleSummary, 'lineas' | 'unidades'> & { clave_idempotencia: string; items: SaleLine[] }
 export type SalesSummaryStats = { total_ventas: number; ventas_hoy: number; importe_hoy: number }
 export type Supplier = { id: string; nombre: string; documento: string | null; telefono: string | null; correo: string | null; activo: boolean; creado_en: string }
-export type PurchaseLine = { id: string; producto_id: string; codigo_producto: string; nombre_producto: string; cantidad: number; costo_unitario?: number; subtotal?: number }
-export type Purchase = { id: string; numero: number; proveedor_id: string; proveedor: string; creado_en: string; estado: 'pendiente' | 'recibida' | 'cancelada'; total_estimado?: number; recibido_en: string | null; recibido_nombre?: string | null; creado_nombre?: string; lineas?: number; items?: PurchaseLine[]; observacion?: string }
+export type PurchaseLine = { id: string; producto_id: string; codigo_producto: string; nombre_producto: string; cantidad: number; recibida: number; pendiente: number; costo_unitario?: number; subtotal?: number }
+export type Purchase = { id: string; numero: number; proveedor_id: string; proveedor: string; creado_en: string; estado: 'pendiente' | 'parcial' | 'recibida' | 'cancelada'; total_estimado?: number; recibido_en: string | null; recibido_nombre?: string | null; creado_nombre?: string; lineas?: number; items?: PurchaseLine[]; observacion?: string; recepciones?: { id: string; fecha: string; usuario_nombre: string; nombre_producto: string; cantidad: number }[] }
 export type ManagementOverview = { ventas_hoy: number; importe_hoy: number; ventas_mes: number; importe_mes: number; pedidos_pendientes: number; productos_mas_vendidos: { codigo_producto: string; nombre_producto: string; unidades: number; importe: number }[] }
 
 export const money = (value: number) => new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(value)
