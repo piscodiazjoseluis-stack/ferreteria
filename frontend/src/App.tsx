@@ -38,7 +38,7 @@ export default function App() {
   }, [session])
 
   async function logout() { await supabase?.auth.signOut({ scope: 'local' }); setSession(null); setProfile(null) }
-  if (window.location.pathname === '/catalogo') return <PublicCatalog />
+  if (window.location.pathname.replace(/\/$/, '') === '/catalogo') return <PublicCatalog />
   if (loading) return <div className="loading-screen"><Brand /><p>Comprobando acceso…</p></div>
   if (!session) return <Auth onSession={next => { setSession(next); setProfile(null); setError('') }} />
   if (!profile) return <div className="loading-screen"><Brand /><p>{error || 'Validando tu perfil…'}</p>{error && <button onClick={logout}>Cerrar sesión</button>}</div>

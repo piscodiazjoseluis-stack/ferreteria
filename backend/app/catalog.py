@@ -25,6 +25,7 @@ class ProductInput(BaseModel):
     stock_minimo: NonnegativeQuantity
     stock_objetivo: NonnegativeQuantity | None = None
 
+    equivalencia: str = Field(default='',max_length=160)
     marca: str = Field(default='', max_length=100)
     foto: str = ''
     costo_unitario: Decimal = Field(default=0,ge=0,max_digits=16,decimal_places=4)
@@ -90,7 +91,7 @@ class StockAdjustment(BaseModel):
 
 PRODUCT_QUERY = text('''
  SELECT p.id,p.codigo,p.nombre,p.categoria_id,c.nombre AS categoria,
-        p.unidad_venta,p.marca,p.foto,p.costo_unitario,p.tipo,p.precio_venta,p.stock_minimo,p.stock_objetivo,p.activo,
+        p.unidad_venta,p.equivalencia,p.marca,p.foto,p.costo_unitario,p.tipo,p.precio_venta,p.stock_minimo,p.stock_objetivo,p.activo,
         coalesce(e.cantidad,0) AS stock,p.creado_en,p.actualizado_en
  FROM ferreteria.productos p
  JOIN ferreteria.categorias c ON c.id=p.categoria_id
@@ -139,8 +140,8 @@ def create_product(data: ProductCreate, profile: Annotated[Profile, Depends(requ
             check_unit(data.unidad_venta,data.saldo_inicial)
             product_id = connection.execute(text('''
               INSERT INTO ferreteria.productos
-                (codigo,nombre,categoria_id,unidad_venta,precio_venta,stock_minimo,stock_objetivo,marca,foto,costo_unitario,tipo)
-              VALUES (:codigo,:nombre,:categoria_id,:unidad_venta,:precio_venta,:stock_minimo,coalesce(:stock_objetivo,:stock_minimo),:marca,:foto,:costo_unitario,:tipo)
+                (codigo,nombre,categoria_id,unidad_venta,precio_venta,stock_minimo,stock_objetivo,equivalencia,marca,foto,costo_unitario,tipo)
+              VALUES (:codigo,:nombre,:categoria_id,:unidad_venta,:precio_venta,:stock_minimo,coalesce(:stock_objetivo,:stock_minimo),:equivalencia,:marca,:foto,:costo_unitario,:tipo)
               RETURNING id
             '''), data.model_dump(exclude={'saldo_inicial'})).scalar_one()
             connection.execute(text('''
@@ -171,7 +172,7 @@ def update_product(product_id: UUID, data: ProductUpdate,
             updated = connection.execute(text('''
               UPDATE ferreteria.productos
               SET codigo=:codigo,nombre=:nombre,categoria_id=:categoria_id,
-                  unidad_venta=:unidad_venta,precio_venta=:precio_venta,marca=:marca,foto=:foto,costo_unitario=:costo_unitario,tipo=:tipo,
+                  unidad_venta=:unidad_venta,precio_venta=:precio_venta,equivalencia=:equivalencia,marca=:marca,foto=:foto,costo_unitario=:costo_unitario,tipo=:tipo,
                   stock_minimo=:stock_minimo,stock_objetivo=coalesce(:stock_objetivo,greatest(stock_objetivo,:stock_minimo)),activo=:activo
               WHERE id=:id RETURNING id
             '''), {'id': product_id, **data.model_dump()}).scalar_one_or_none()

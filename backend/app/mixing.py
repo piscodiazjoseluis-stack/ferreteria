@@ -48,7 +48,7 @@ def formula_view(c,id):
     f=c.execute(text('''SELECT f.*,p.nombre AS salida,p.unidad_venta AS unidad_salida,cl.nombre AS cliente
       FROM ferreteria.formulas f JOIN ferreteria.productos p ON p.id=f.salida_id LEFT JOIN ferreteria.clientes cl ON cl.id=f.cliente_id WHERE f.id=:id'''),{'id':id}).mappings().one_or_none()
     if not f: raise HTTPException(404,'Fórmula no encontrada.')
-    components=[dict(r) for r in c.execute(text('''SELECT cf.*,p.nombre,p.codigo,p.unidad_venta,p.costo_unitario,e.cantidad AS disponible
+    components=[dict(r) for r in c.execute(text('''SELECT cf.*,p.nombre,p.marca,p.equivalencia,p.codigo,p.unidad_venta,p.costo_unitario,e.cantidad AS disponible
       FROM ferreteria.componentes_formula cf JOIN ferreteria.productos p ON p.id=cf.producto_id JOIN ferreteria.existencias e ON e.producto_id=p.id
       WHERE cf.formula_id=:id ORDER BY cf.funcion,cf.id'''),{'id':id}).mappings()]
     cost=money(sum((r['cantidad']*r['costo_unitario'] for r in components),Decimal(0)))
