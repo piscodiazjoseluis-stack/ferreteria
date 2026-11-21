@@ -8,6 +8,7 @@
 - API pública: 30 comprobaciones con cuatro inicios de sesión reales. Preparación: 250.5 ml de base y 2.125 g de colorante; venta a crédito S/ 25; abono en efectivo S/ 10; saldo S/ 15. Datos ficticios FINAL-; no se cerró la caja.
 - Navegador público: Gerente, Vendedor, Almacenero y Cajero iniciaron sesión; navegación y cuenta de cliente verificadas; catálogo anónimo a 390 px con WhatsApp sin enviar mensajes y sin desplazamiento horizontal del documento.
 - Navegador local: alta de cliente, alta de fórmula, preparación confirmada, consulta gerencial y revisión de caja cancelada. Sin errores JavaScript en esos recorridos.
+- Dependencias: se corrigieron avisos conocidos de Vite y source-map-js mediante actualizaciones compatibles (Vite 8.3.8 y source-map-js 1.2.4), y se actualizó certifi a 2026.11.20. npm audit y pip-audit de los requisitos fijados terminaron sin vulnerabilidades conocidas. Esto no equivale a una certificación de seguridad total.
 
 ## Restricciones explícitas
 

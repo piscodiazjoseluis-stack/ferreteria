@@ -37,6 +37,7 @@ jobs:
           npm ci --prefix frontend
           npm run lint --prefix frontend
           npm run build --prefix frontend
+          npm audit --prefix frontend --audit-level=high
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
