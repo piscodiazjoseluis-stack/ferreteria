@@ -125,6 +125,8 @@ def prepare(data:PrepareInput,profile:Staff):
         if quantity!=quantity.quantize(Decimal('.001')): raise HTTPException(422,'El rendimiento requiere más de tres decimales.')
         check_unit(locked[f['salida_id']]['unidad_venta'],quantity)
         cost=money(sum((Decimal(r['cantidad'])*Decimal(r['costo_unitario']) for r in detail),Decimal(0)))
+        if cost>Decimal('9999999999.99') or money(cost*(1+f['margen']/100))>Decimal('9999999999.99'):
+            raise HTTPException(422,'El costo o precio sugerido supera el importe permitido.')
         result=c.execute(text('''INSERT INTO ferreteria.preparaciones(id,formula_id,cliente_id,salida_id,cantidad,costo,precio_sugerido,detalle,huella,usuario_id,usuario_nombre,reproceso_de,motivo)
           VALUES(:id,:formula,:client,:output,:quantity,:cost,:price,CAST(:detail AS jsonb),:hash,:user,:name,:previous,:reason) RETURNING *'''),
           {'id':data.id,'formula':data.formula_id,'client':f['cliente_id'],'output':f['salida_id'],'quantity':quantity,'cost':cost,'price':money(cost*(1+f['margen']/100)),

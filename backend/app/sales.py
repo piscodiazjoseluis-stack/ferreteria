@@ -109,6 +109,8 @@ def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(require_s
                 stock[item.producto_id] = row
 
             total = sum((money(stock[i.producto_id]['precio_venta'] * i.cantidad) for i in data.items), Decimal('0'))
+            if total < Decimal('.01'):
+                raise HTTPException(422, 'El total debe ser al menos un céntimo.')
             if total > Decimal('9999999999.99'):
                 raise HTTPException(422, 'El total supera el importe permitido.')
             if data.metodo_pago=='credito':
