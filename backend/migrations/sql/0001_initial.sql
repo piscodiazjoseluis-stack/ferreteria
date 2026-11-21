@@ -1,15 +1,4 @@
--- Ferreteria only: legacy cleanup explicitly authorized by the owner.
--- Backup: .artifacts/legacy-backup.json. No CASCADE: unexpected dependencies abort.
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS public.handle_new_user();
-DROP VIEW IF EXISTS public.vw_rotation_check;
-DROP VIEW IF EXISTS public.vw_dashboard_requests;
-DROP TABLE public.early_requests;
-DROP TABLE public.profiles;
-DROP TABLE public.teams;
-DROP TYPE public.request_status;
-DROP TYPE public.user_role;
-
+-- Fresh installation only. Historical cleanup is intentionally not replayed.
 CREATE SCHEMA ferreteria;
 REVOKE ALL ON SCHEMA ferreteria FROM PUBLIC, anon, authenticated;
 CREATE ROLE ferreteria_api NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS;

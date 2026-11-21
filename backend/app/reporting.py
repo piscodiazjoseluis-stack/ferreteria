@@ -21,10 +21,10 @@ def replenishment(profile: Annotated[Profile, Depends(require_manager)]):
             LEFT JOIN received r ON r.detalle_compra_id=d.id WHERE c.estado IN ('pendiente','parcial') GROUP BY d.producto_id)
           SELECT p.id,p.codigo,p.nombre,p.stock_minimo,p.stock_objetivo,e.cantidad AS stock,
             coalesce(x.cantidad,0)::bigint AS pendiente,
-            greatest(0,p.stock_objetivo::bigint-e.cantidad-coalesce(x.cantidad,0)) AS sugerida
+            greatest(0,p.stock_objetivo-e.cantidad-coalesce(x.cantidad,0)) AS sugerida
           FROM ferreteria.productos p JOIN ferreteria.existencias e ON e.producto_id=p.id
           LEFT JOIN pending x ON x.producto_id=p.id WHERE p.activo
-          ORDER BY greatest(0,p.stock_objetivo::bigint-e.cantidad-coalesce(x.cantidad,0)) DESC,p.nombre
+          ORDER BY greatest(0,p.stock_objetivo-e.cantidad-coalesce(x.cantidad,0)) DESC,p.nombre
         ''')).mappings()
         return [dict(r) for r in rows]
 
@@ -41,7 +41,7 @@ def overview(profile: Annotated[Profile, Depends(require_manager)]):
               AT TIME ZONE 'America/Lima') AS ventas_mes,
             coalesce(sum(total) FILTER (WHERE fecha >= date_trunc('month', now() AT TIME ZONE 'America/Lima')
               AT TIME ZONE 'America/Lima'),0) AS importe_mes
-          FROM ferreteria.ventas
+          FROM ferreteria.ventas WHERE NOT EXISTS(SELECT 1 FROM ferreteria.anulaciones a WHERE a.venta_id=ventas.id)
         ''')).mappings().one()
         pending = connection.execute(text('''
           SELECT count(*) FROM ferreteria.compras WHERE estado IN ('pendiente','parcial')
@@ -52,8 +52,9 @@ def overview(profile: Annotated[Profile, Depends(require_manager)]):
           FROM ferreteria.detalle_venta d JOIN ferreteria.ventas v ON v.id=d.venta_id
           WHERE v.fecha >= date_trunc('month', now() AT TIME ZONE 'America/Lima')
             AT TIME ZONE 'America/Lima'
+          AND NOT EXISTS(SELECT 1 FROM ferreteria.anulaciones a WHERE a.venta_id=v.id)
           GROUP BY d.codigo_producto,d.nombre_producto
-          ORDER BY unidades DESC,importe DESC LIMIT 5
+          ORDER BY unidades DESC,importe DESC LIMIT 10
         ''')).mappings().all()
         return {**dict(sales), 'pedidos_pendientes': pending,
                 'productos_mas_vendidos': [dict(row) for row in top]}

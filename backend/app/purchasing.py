@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
+from app.values import Quantity, NonnegativeQuantity, check_unit, money
 from app.auth import Profile, require_manager, require_storekeeper, require_warehouse
 from app.database import user_connection
 
@@ -22,6 +23,7 @@ class SupplierInput(BaseModel):
     documento: str | None = Field(default=None, max_length=20)
     telefono: str | None = Field(default=None, max_length=30)
     correo: str | None = Field(default=None, max_length=160)
+    condiciones_pago: str = Field(default='',max_length=250)
 
     @field_validator('nombre')
     @classmethod
@@ -40,12 +42,13 @@ class SupplierUpdate(SupplierInput):
 
 class PurchaseLine(BaseModel):
     producto_id: UUID
-    cantidad: int = Field(gt=0, le=2_147_483_647)
+    cantidad: Quantity
     costo_unitario: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
 
 
 class PurchaseInput(BaseModel):
     proveedor_id: UUID
+    borrador: bool = False
     observacion: str = Field(default='', max_length=500)
     items: list[PurchaseLine] = Field(min_length=1, max_length=50)
 
@@ -58,7 +61,7 @@ class PurchaseInput(BaseModel):
 
 class ReceivedLine(BaseModel):
     detalle_id: UUID
-    cantidad_fisica: int = Field(ge=0, le=2_147_483_647)
+    cantidad_fisica: NonnegativeQuantity
 
 
 class ReceiveInput(BaseModel):
@@ -83,8 +86,8 @@ def purchase_view(connection, purchase_id: UUID, profile: Profile):
         raise HTTPException(404, 'Pedido no encontrado.')
     lines = connection.execute(text('''
       SELECT d.id,d.producto_id,d.codigo_producto,d.nombre_producto,d.cantidad,d.costo_unitario,d.subtotal,
-             coalesce(r.recibida,0)::integer AS recibida,
-             (d.cantidad-coalesce(r.recibida,0))::integer AS pendiente
+             coalesce(r.recibida,0) AS recibida,
+             (d.cantidad-coalesce(r.recibida,0)) AS pendiente
       FROM ferreteria.detalle_compra d LEFT JOIN (
         SELECT detalle_compra_id,sum(cantidad) AS recibida FROM ferreteria.detalle_recepcion GROUP BY detalle_compra_id
       ) r ON r.detalle_compra_id=d.id WHERE d.compra_id=:id ORDER BY d.codigo_producto
@@ -109,7 +112,7 @@ def purchase_view(connection, purchase_id: UUID, profile: Profile):
 def suppliers(profile: Annotated[Profile, Depends(require_warehouse)]):
     with user_connection(profile.id) as connection:
         return [dict(row) for row in connection.execute(text('''
-          SELECT id,nombre,documento,telefono,correo,activo,creado_en
+          SELECT id,nombre,documento,telefono,correo,condiciones_pago,activo,creado_en
           FROM ferreteria.proveedores ORDER BY nombre
         ''')).mappings()]
 
@@ -119,9 +122,9 @@ def create_supplier(data: SupplierInput, profile: Annotated[Profile, Depends(req
     try:
         with user_connection(profile.id) as connection:
             return dict(connection.execute(text('''
-              INSERT INTO ferreteria.proveedores(nombre,documento,telefono,correo)
-              VALUES (:nombre,:documento,:telefono,:correo)
-              RETURNING id,nombre,documento,telefono,correo,activo,creado_en
+              INSERT INTO ferreteria.proveedores(nombre,documento,telefono,correo,condiciones_pago)
+              VALUES (:nombre,:documento,:telefono,:correo,:condiciones_pago)
+              RETURNING id,nombre,documento,telefono,correo,condiciones_pago,activo,creado_en
             '''), data.model_dump()).mappings().one())
     except IntegrityError:
         raise HTTPException(409, 'Ya existe un proveedor con ese documento o los datos no son válidos.') from None
@@ -134,8 +137,8 @@ def update_supplier(supplier_id: UUID, data: SupplierUpdate,
         with user_connection(profile.id) as connection:
             row = connection.execute(text('''
               UPDATE ferreteria.proveedores
-              SET nombre=:nombre,documento=:documento,telefono=:telefono,correo=:correo,activo=:activo
-              WHERE id=:id RETURNING id,nombre,documento,telefono,correo,activo,creado_en
+              SET nombre=:nombre,documento=:documento,telefono=:telefono,correo=:correo,condiciones_pago=:condiciones_pago,activo=:activo
+              WHERE id=:id RETURNING id,nombre,documento,telefono,correo,condiciones_pago,activo,creado_en
             '''), {'id': supplier_id, **data.model_dump()}).mappings().one_or_none()
             if row is None:
                 raise HTTPException(404, 'Proveedor no encontrado.')
@@ -187,19 +190,20 @@ def create_purchase(data: PurchaseInput, profile: Annotated[Profile, Depends(req
         products = {}
         for line in data.items:
             row = connection.execute(text('''
-              SELECT id,codigo,nombre,activo FROM ferreteria.productos WHERE id=:id
+              SELECT id,codigo,nombre,unidad_venta,activo FROM ferreteria.productos WHERE id=:id
             '''), {'id': line.producto_id}).mappings().one_or_none()
             if row is None or not row['activo']:
                 raise HTTPException(422, 'Un producto no existe o está inactivo.')
+            check_unit(row['unidad_venta'],line.cantidad)
             products[line.producto_id] = row
-        total = sum((line.cantidad * line.costo_unitario for line in data.items), Decimal('0'))
+        total = sum((money(line.cantidad * line.costo_unitario) for line in data.items), Decimal('0'))
         if total > Decimal('9999999999.99'):
             raise HTTPException(422, 'El total del pedido supera el límite permitido.')
         purchase_id = connection.execute(text('''
-              INSERT INTO ferreteria.compras(proveedor_id,creado_por,creado_nombre,total_estimado,observacion)
-              VALUES (:supplier,:user_id,:user_name,:total,:note) RETURNING id
+              INSERT INTO ferreteria.compras(proveedor_id,creado_por,creado_nombre,total_estimado,observacion,estado)
+              VALUES (:supplier,:user_id,:user_name,:total,:note,:state) RETURNING id
         '''), {'supplier': data.proveedor_id, 'user_id': profile.id, 'total': total,
-               'user_name': profile.nombre, 'note': data.observacion.strip()}).scalar_one()
+               'user_name': profile.nombre, 'note': data.observacion.strip(), 'state':'borrador' if data.borrador else 'pendiente'}).scalar_one()
         for line in data.items:
             product = products[line.producto_id]
             connection.execute(text('''
@@ -216,7 +220,7 @@ def create_purchase(data: PurchaseInput, profile: Annotated[Profile, Depends(req
 def receive_purchase(purchase_id: UUID, data: ReceiveInput,
                      profile: Annotated[Profile, Depends(require_storekeeper)]):
     with user_connection(profile.id) as connection:
-        fingerprint = hashlib.sha256(json.dumps(sorted((str(i.detalle_id), i.cantidad_fisica) for i in data.items)).encode()).hexdigest()
+        fingerprint = hashlib.sha256(json.dumps(sorted((str(i.detalle_id), str(i.cantidad_fisica.normalize())) for i in data.items)).encode()).hexdigest()
         connection.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:key,0))'), {'key': str(data.clave_idempotencia)})
         previous = connection.execute(text('SELECT compra_id,huella FROM ferreteria.recepciones WHERE id=:id'), {'id': data.clave_idempotencia}).mappings().one_or_none()
         if previous:
@@ -260,12 +264,13 @@ def receive_purchase(purchase_id: UUID, data: ReceiveInput,
             if not quantity:
                 continue
             row = connection.execute(text('''
-              SELECT e.cantidad,p.activo FROM ferreteria.existencias e
+              SELECT e.cantidad,p.activo,p.unidad_venta FROM ferreteria.existencias e
               JOIN ferreteria.productos p ON p.id=e.producto_id
               WHERE e.producto_id=:id FOR UPDATE OF e
             '''), {'id': line['producto_id']}).mappings().one_or_none()
             if row is None or not row['activo']:
                 raise HTTPException(409, f"{line['nombre_producto']} ya no está activo.")
+            check_unit(row['unidad_venta'],quantity)
             after = row['cantidad'] + quantity
             if after > 2_147_483_647:
                 raise HTTPException(422, 'La cantidad supera el límite de existencias.')
@@ -294,7 +299,18 @@ def cancel_purchase(purchase_id: UUID, profile: Annotated[Profile, Depends(requi
         '''), {'id': purchase_id}).mappings().one_or_none()
         if order is None:
             raise HTTPException(404, 'Pedido no encontrado.')
-        if order['estado'] != 'pendiente':
+        if order['estado'] not in ('borrador','pendiente'):
             raise HTTPException(409, 'Solo se puede cancelar un pedido pendiente.')
         connection.execute(text("UPDATE ferreteria.compras SET estado='cancelada' WHERE id=:id"), {'id': purchase_id})
         return purchase_view(connection, purchase_id, profile)
+
+
+@router.post('/purchases/{purchase_id}/send')
+def send_purchase(purchase_id:UUID,profile:Annotated[Profile,Depends(require_manager)]):
+    with user_connection(profile.id) as c:
+        state=c.execute(text('SELECT estado FROM ferreteria.compras WHERE id=:id FOR UPDATE'),{'id':purchase_id}).scalar_one_or_none()
+        if state is None: raise HTTPException(404,'Pedido no encontrado.')
+        if state=='borrador':
+            c.execute(text("UPDATE ferreteria.compras SET estado='pendiente' WHERE id=:id"),{'id':purchase_id})
+        elif state!='pendiente': raise HTTPException(409,'El pedido no se puede emitir en este estado.')
+        return purchase_view(c,purchase_id,profile)

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { PublicCatalog } from './PublicCatalog'
 import { Auth } from './Auth'
 import { Brand } from './Brand'
 import { Workspace } from './Workspace'
@@ -37,6 +38,7 @@ export default function App() {
   }, [session])
 
   async function logout() { await supabase?.auth.signOut({ scope: 'local' }); setSession(null); setProfile(null) }
+  if (window.location.pathname === '/catalogo') return <PublicCatalog />
   if (loading) return <div className="loading-screen"><Brand /><p>Comprobando acceso…</p></div>
   if (!session) return <Auth onSession={next => { setSession(next); setProfile(null); setError('') }} />
   if (!profile) return <div className="loading-screen"><Brand /><p>{error || 'Validando tu perfil…'}</p>{error && <button onClick={logout}>Cerrar sesión</button>}</div>

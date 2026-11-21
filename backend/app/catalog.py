@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
+from app.values import Quantity, NonnegativeQuantity, photo, check_unit
 from app.auth import Profile, current_profile, require_manager
 from app.database import user_connection
 
@@ -19,10 +20,16 @@ class ProductInput(BaseModel):
     codigo: str = Field(min_length=1, max_length=40)
     nombre: str = Field(min_length=1, max_length=160)
     categoria_id: UUID
-    unidad_venta: Literal['unidad', 'caja', 'bolsa', 'paquete', 'galon', 'balde']
+    unidad_venta: Literal['unidad', 'caja', 'bolsa', 'paquete', 'galon', 'balde', 'ml', 'g', 'litro', 'kg']
     precio_venta: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
-    stock_minimo: int = Field(ge=0, le=2_147_483_647)
-    stock_objetivo: int | None = Field(default=None, ge=0, le=2_147_483_647)
+    stock_minimo: NonnegativeQuantity
+    stock_objetivo: NonnegativeQuantity | None = None
+
+    marca: str = Field(default='', max_length=100)
+    foto: str = ''
+    costo_unitario: Decimal = Field(default=0,ge=0,max_digits=16,decimal_places=4)
+    tipo: Literal['mercaderia','insumo','preparado'] = 'mercaderia'
+    _photo = field_validator('foto')(photo)
 
     @model_validator(mode='after')
     def valid_target(self):
@@ -48,7 +55,7 @@ class ProductInput(BaseModel):
 
 
 class ProductCreate(ProductInput):
-    saldo_inicial: int = Field(default=0, ge=0, le=2_147_483_647)
+    saldo_inicial: NonnegativeQuantity = Decimal('0')
 
 
 class ProductUpdate(ProductInput):
@@ -56,7 +63,7 @@ class ProductUpdate(ProductInput):
 
 
 class StockEntry(BaseModel):
-    cantidad: int = Field(gt=0, le=2_147_483_647)
+    cantidad: Quantity
     motivo: str = Field(min_length=3, max_length=500)
 
     @field_validator('motivo')
@@ -69,7 +76,7 @@ class StockEntry(BaseModel):
 
 
 class StockAdjustment(BaseModel):
-    cantidad_fisica: int = Field(ge=0, le=2_147_483_647)
+    cantidad_fisica: NonnegativeQuantity
     motivo: str = Field(min_length=3, max_length=500)
 
     @field_validator('motivo')
@@ -83,7 +90,7 @@ class StockAdjustment(BaseModel):
 
 PRODUCT_QUERY = text('''
  SELECT p.id,p.codigo,p.nombre,p.categoria_id,c.nombre AS categoria,
-        p.unidad_venta,p.precio_venta,p.stock_minimo,p.stock_objetivo,p.activo,
+        p.unidad_venta,p.marca,p.foto,p.costo_unitario,p.tipo,p.precio_venta,p.stock_minimo,p.stock_objetivo,p.activo,
         coalesce(e.cantidad,0) AS stock,p.creado_en,p.actualizado_en
  FROM ferreteria.productos p
  JOIN ferreteria.categorias c ON c.id=p.categoria_id
@@ -117,7 +124,7 @@ def categories(profile: Annotated[Profile, Depends(current_profile)]):
 @router.get('/products')
 def products(profile: Annotated[Profile, Depends(current_profile)]):
     with user_connection(profile.id) as connection:
-        return [dict(row) for row in connection.execute(
+        return [{k:v for k,v in row.items() if k!='costo_unitario' or profile.rol=='gerente'} for row in connection.execute(
             text(PRODUCT_QUERY.text + ' ORDER BY p.nombre,p.codigo')
         ).mappings()]
 
@@ -127,10 +134,13 @@ def create_product(data: ProductCreate, profile: Annotated[Profile, Depends(requ
     try:
         with user_connection(profile.id) as connection:
             require_category(connection, data.categoria_id)
+            check_unit(data.unidad_venta,data.stock_minimo)
+            if data.stock_objetivo is not None: check_unit(data.unidad_venta,data.stock_objetivo)
+            check_unit(data.unidad_venta,data.saldo_inicial)
             product_id = connection.execute(text('''
               INSERT INTO ferreteria.productos
-                (codigo,nombre,categoria_id,unidad_venta,precio_venta,stock_minimo,stock_objetivo)
-              VALUES (:codigo,:nombre,:categoria_id,:unidad_venta,:precio_venta,:stock_minimo,coalesce(:stock_objetivo,:stock_minimo))
+                (codigo,nombre,categoria_id,unidad_venta,precio_venta,stock_minimo,stock_objetivo,marca,foto,costo_unitario,tipo)
+              VALUES (:codigo,:nombre,:categoria_id,:unidad_venta,:precio_venta,:stock_minimo,coalesce(:stock_objetivo,:stock_minimo),:marca,:foto,:costo_unitario,:tipo)
               RETURNING id
             '''), data.model_dump(exclude={'saldo_inicial'})).scalar_one()
             connection.execute(text('''
@@ -156,10 +166,12 @@ def update_product(product_id: UUID, data: ProductUpdate,
     try:
         with user_connection(profile.id) as connection:
             require_category(connection, data.categoria_id)
+            check_unit(data.unidad_venta,data.stock_minimo)
+            if data.stock_objetivo is not None: check_unit(data.unidad_venta,data.stock_objetivo)
             updated = connection.execute(text('''
               UPDATE ferreteria.productos
               SET codigo=:codigo,nombre=:nombre,categoria_id=:categoria_id,
-                  unidad_venta=:unidad_venta,precio_venta=:precio_venta,
+                  unidad_venta=:unidad_venta,precio_venta=:precio_venta,marca=:marca,foto=:foto,costo_unitario=:costo_unitario,tipo=:tipo,
                   stock_minimo=:stock_minimo,stock_objetivo=coalesce(:stock_objetivo,greatest(stock_objetivo,:stock_minimo)),activo=:activo
               WHERE id=:id RETURNING id
             '''), {'id': product_id, **data.model_dump()}).scalar_one_or_none()
@@ -178,7 +190,7 @@ def change_stock(product_id: UUID, profile: Profile, movement_type: str,
                  quantity: int | None, physical: int | None, reason: str):
     with user_connection(profile.id) as connection:
         product = connection.execute(text('''
-          SELECT p.activo,e.cantidad FROM ferreteria.productos p
+          SELECT p.activo,p.unidad_venta,e.cantidad FROM ferreteria.productos p
           JOIN ferreteria.existencias e ON e.producto_id=p.id
           WHERE p.id=:id FOR UPDATE OF e
         '''), {'id': product_id}).mappings().one_or_none()
@@ -186,6 +198,7 @@ def change_stock(product_id: UUID, profile: Profile, movement_type: str,
             raise HTTPException(404, 'Producto no encontrado.')
         if not product['activo']:
             raise HTTPException(409, 'Activa el producto antes de modificar sus existencias.')
+        check_unit(product['unidad_venta'], physical if physical is not None else quantity)
         before = product['cantidad']
         after = physical if physical is not None else before + quantity
         if after == before:

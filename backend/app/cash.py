@@ -7,11 +7,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import text
-from app.auth import Profile, require_manager, require_sales_access
+from app.auth import Profile, require_manager, require_sales_access, require_cashier
 from app.database import user_connection
 
 router = APIRouter(prefix='/api/cash', tags=['Caja diaria'])
-Manager = Annotated[Profile, Depends(require_manager)]
+Manager = Annotated[Profile, Depends(require_cashier)]
 
 
 def today(c):
@@ -33,13 +33,15 @@ def require_open_cash(c):
 def totals(c, box):
     sales = c.execute(text('''SELECT metodo_pago,count(*) AS operaciones,sum(total) AS total FROM ferreteria.ventas
       WHERE fecha>=CAST(:day AS date) AT TIME ZONE 'America/Lima'
-      AND fecha<(CAST(:day AS date)+1) AT TIME ZONE 'America/Lima' GROUP BY metodo_pago'''), {'day':box['fecha']}).mappings().all()
+      AND fecha<(CAST(:day AS date)+1) AT TIME ZONE 'America/Lima' AND NOT EXISTS(SELECT 1 FROM ferreteria.anulaciones a WHERE a.venta_id=ventas.id) GROUP BY metodo_pago'''), {'day':box['fecha']}).mappings().all()
     payments = {k:Decimal('0') for k in ('efectivo','yape','plin','transferencia','tarjeta')}
-    for s in sales: payments[s['metodo_pago']] = s['total']
+    for s in sales:
+        if s['metodo_pago']!='credito': payments[s['metodo_pago']] = s['total']
     m = c.execute(text('''SELECT coalesce(sum(importe) FILTER(WHERE tipo='ingreso'),0) AS ingresos,
       coalesce(sum(importe) FILTER(WHERE tipo='retiro'),0) AS retiros FROM ferreteria.movimientos_caja WHERE caja_id=:id'''), {'id':box['id']}).mappings().one()
-    return {'pagos':payments,'ventas_total':sum(payments.values()),'operaciones':sum(s['operaciones'] for s in sales),
-            **dict(m),'efectivo_esperado':box['fondo']+payments['efectivo']+m['ingresos']-m['retiros']}
+    abonos=c.execute(text("SELECT coalesce(sum(importe) FILTER(WHERE metodo_pago='efectivo'),0) FROM ferreteria.abonos WHERE fecha>=CAST(:day AS date) AT TIME ZONE 'America/Lima' AND fecha<(CAST(:day AS date)+1) AT TIME ZONE 'America/Lima'"),{'day':box['fecha']}).scalar_one()
+    return {'pagos':payments,'abonos_efectivo':abonos,'ventas_total':sum((s['total'] for s in sales),Decimal(0)),'operaciones':sum(s['operaciones'] for s in sales),
+            **dict(m),'efectivo_esperado':box['fondo']+payments['efectivo']+abonos+m['ingresos']-m['retiros']}
 
 
 def view(c, box):

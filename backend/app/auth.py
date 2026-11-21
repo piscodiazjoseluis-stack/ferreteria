@@ -17,7 +17,7 @@ bearer = HTTPBearer(auto_error=False)
 class Profile(BaseModel):
     id: UUID
     nombre: str
-    rol: Literal['gerente', 'vendedor', 'almacenero']
+    rol: Literal['gerente', 'vendedor', 'almacenero', 'cajero']
     activo: bool
 
 
@@ -81,6 +81,12 @@ def require_storekeeper(profile: Annotated[Profile, Depends(current_profile)]) -
 
 
 def require_sales_access(profile: Annotated[Profile, Depends(current_profile)]) -> Profile:
-    if profile.rol not in ('gerente', 'vendedor'):
+    if profile.rol not in ('gerente', 'vendedor', 'cajero'):
         raise HTTPException(403, 'Esta acción requiere el rol de gerente o vendedor.')
+    return profile
+
+
+def require_cashier(profile: Annotated[Profile, Depends(current_profile)]) -> Profile:
+    if profile.rol not in ('gerente','cajero'):
+        raise HTTPException(403,'Esta acción requiere Gerencia o Caja.')
     return profile
