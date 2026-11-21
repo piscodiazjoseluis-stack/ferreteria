@@ -1,0 +1,30 @@
+name: Respaldo comercial cifrado
+on:
+  schedule:
+    - cron: '17 8 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: respaldo-comercial
+  cancel-in-progress: false
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r backend/scripts/backup_requirements.txt
+      - name: Exportar y cifrar antes de guardar
+        env:
+          BACKUP_DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+        run: python backend/scripts/backup_business.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ferreteria-cifrada-${{ github.run_id }}
+          path: .backup-output/*.enc
+          if-no-files-found: error
+          retention-days: 7

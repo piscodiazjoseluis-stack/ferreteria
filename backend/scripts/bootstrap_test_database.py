@@ -17,10 +17,10 @@ def bootstrap():
         for role in ('anon','authenticated'):
             if not c.execute('SELECT 1 FROM pg_roles WHERE rolname=%s',(role,)).fetchone(): c.execute('CREATE ROLE '+role+' NOLOGIN')
         c.execute('CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY)')
-        for file in ['backend/migrations/sql/0001_initial.sql','backend/migrations/sql/0002_compras_almacen.sql','backend/migrations/sql/0003_indices_compras.sql','supabase/migrations/20261107164429_operaciones_v3.sql','supabase/migrations/20261121165018_cierre_final.sql','supabase/migrations/20261121172329_endurecimiento_final.sql']:
+        for file in ['backend/migrations/sql/0001_initial.sql','backend/migrations/sql/0002_compras_almacen.sql','backend/migrations/sql/0003_indices_compras.sql','supabase/migrations/20261107164429_operaciones_v3.sql','supabase/migrations/20261121165018_cierre_final.sql','supabase/migrations/20261121172329_endurecimiento_final.sql','supabase/migrations/20261121175846_respaldo_comercial.sql']:
             source=(ROOT/file).read_text(encoding='utf-8')
             import re
-            for role in ('ferreteria_api','ferreteria_public'):
+            for role in ('ferreteria_api','ferreteria_public','ferreteria_backup'):
                 if c.execute('SELECT 1 FROM pg_roles WHERE rolname=%s',(role,)).fetchone():
                     source=re.sub('CREATE ROLE '+role+'[^;]+;','',source)
             with c.transaction(): c.execute(source)
