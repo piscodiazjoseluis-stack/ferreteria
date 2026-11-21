@@ -221,10 +221,13 @@ def receive_purchase(purchase_id: UUID, data: ReceiveInput,
                      profile: Annotated[Profile, Depends(require_storekeeper)]):
     with user_connection(profile.id) as connection:
         fingerprint = hashlib.sha256(json.dumps(sorted((str(i.detalle_id), str(i.cantidad_fisica.normalize())) for i in data.items)).encode()).hexdigest()
+        accepted_fingerprints={fingerprint}
+        if all(i.cantidad_fisica==int(i.cantidad_fisica) for i in data.items):
+            accepted_fingerprints.add(hashlib.sha256(json.dumps(sorted((str(i.detalle_id),int(i.cantidad_fisica)) for i in data.items)).encode()).hexdigest())
         connection.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:key,0))'), {'key': str(data.clave_idempotencia)})
         previous = connection.execute(text('SELECT compra_id,huella FROM ferreteria.recepciones WHERE id=:id'), {'id': data.clave_idempotencia}).mappings().one_or_none()
         if previous:
-            if previous['compra_id'] != purchase_id or previous['huella'] != fingerprint:
+            if previous['compra_id'] != purchase_id or previous['huella'] not in accepted_fingerprints:
                 raise HTTPException(409, 'El reintento no coincide con la recepción original.')
             return purchase_view(connection, purchase_id, profile)
         # El bloqueo del pedido hace que dos recepciones simultáneas no dupliquen stock.

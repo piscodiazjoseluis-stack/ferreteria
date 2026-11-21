@@ -67,6 +67,12 @@ def receipt(connection, sale_id: UUID, profile: Profile):
 @router.post('', status_code=201)
 def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(require_sales_access)]):
     fingerprint = request_hash(data)
+    accepted_fingerprints={fingerprint}
+    # A V1-V3 request in flight may be retried after the upgrade. Preserve its
+    # original integer-only fingerprint when it did not associate a customer.
+    if data.cliente_id is None and all(i.cantidad==int(i.cantidad) for i in data.items):
+        legacy={'metodo_pago':data.metodo_pago,'items':sorted((str(i.producto_id),int(i.cantidad)) for i in data.items)}
+        accepted_fingerprints.add(hashlib.sha256(json.dumps(legacy,separators=(',',':'),sort_keys=True).encode()).hexdigest())
     try:
         with user_connection(profile.id) as connection:
             # Serialize requests with the same key before reading or changing stock.
@@ -76,7 +82,7 @@ def create_sale(data: SaleRequest, profile: Annotated[Profile, Depends(require_s
               SELECT id,huella_solicitud FROM ferreteria.ventas WHERE clave_idempotencia=:key
             '''), {'key': data.clave_idempotencia}).mappings().one_or_none()
             if existing:
-                if existing['huella_solicitud'] != fingerprint:
+                if existing['huella_solicitud'] not in accepted_fingerprints:
                     raise HTTPException(409, 'Esta clave ya corresponde a una venta diferente.')
                 return receipt(connection, existing['id'], profile)
 
