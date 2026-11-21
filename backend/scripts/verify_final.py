@@ -74,6 +74,11 @@ def run():
     receipt={'clave_idempotencia':str(uuid4()),'items':[{'detalle_id':purchase['items'][0]['id'],'cantidad_fisica':4.25}]}
     partial=request('POST','/purchases/'+purchase['id']+'/receive',receipt,role='almacenero')
     assert float(partial['items'][0]['pendiente'])==6.25 and 'total_estimado' not in partial
+    from app.reporting import replenishment
+    from app.auth import Profile
+    from uuid import UUID
+    suggestions=replenishment(Profile(id=UUID('00000000-0000-4000-8000-000000000001'),nombre='Gerente de prueba',rol='gerente',activo=True))
+    assert float(next(r for r in suggestions if str(r['id'])==base['id'])['pendiente'])==6.25
     request('POST','/purchases/'+purchase['id']+'/receive',receipt,role='almacenero')
     product_after=next(p for p in request('GET','/products') if p['id']==base['id'])
     assert float(product_after['stock'])==753.75 and float(product_after['costo_unitario'])==.0201

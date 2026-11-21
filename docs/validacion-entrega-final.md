@@ -14,6 +14,8 @@
 
 La recuperación Gmail completa conserva la validación previa del titular y no se repitió leyendo el buzón durante este cierre. No se hizo una auditoría externa ni carga masiva. El asesor de seguridad mantiene un aviso de protección de contraseñas filtradas deshabilitada y Alembic cerrada sin políticas de aplicación intencionalmente.
 
+El objetivo tecnológico de respaldo automático se adapta a una copia comercial y restauración comprobadas manualmente. No se configuró una política automática de copia externa ni se contrataron capacidades de pago del proveedor. Es una restricción de continuidad operativa declarada, no un respaldo automático que deba atribuirse al sistema.
+
 El token de CI documentado vence el 23 de noviembre; revisar vigencia antes de otro despliegue. Su caducidad no apaga el sistema publicado. No se implementaron SUNAT, procesamiento bancario, conversiones automáticas de tonos o modo offline. Las reglas acotadas están en la matriz y el manual técnico.
 
 La entrega incluye manuales PDF, informe Word/PDF, matriz PDF y Markdown, diagramas PDF, comparativo, guion, evidencias y presentación editable exportable a PowerPoint. El archivo de código y el paquete académico se distribuyen sin credenciales.

@@ -20,7 +20,7 @@ def replenishment(profile: Annotated[Profile, Depends(require_manager)]):
             FROM ferreteria.detalle_compra d JOIN ferreteria.compras c ON c.id=d.compra_id
             LEFT JOIN received r ON r.detalle_compra_id=d.id WHERE c.estado IN ('pendiente','parcial') GROUP BY d.producto_id)
           SELECT p.id,p.codigo,p.nombre,p.stock_minimo,p.stock_objetivo,e.cantidad AS stock,
-            coalesce(x.cantidad,0)::bigint AS pendiente,
+            coalesce(x.cantidad,0) AS pendiente,
             greatest(0,p.stock_objetivo-e.cantidad-coalesce(x.cantidad,0)) AS sugerida
           FROM ferreteria.productos p JOIN ferreteria.existencias e ON e.producto_id=p.id
           LEFT JOIN pending x ON x.producto_id=p.id WHERE p.activo
