@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     supabase_url: str = ''
     supabase_publishable_key: str = ''
     database_url: str = ''
-    public_whatsapp: str = ''
+    public_whatsapp: str = '51945928413'
 
 
 @lru_cache
