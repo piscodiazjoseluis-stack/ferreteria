@@ -50,7 +50,7 @@ def restore(encrypted,private_key):
         next_sale=c.execute("SELECT nextval('ferreteria.ventas_numero_seq')").fetchone()[0]
         assert next_sale>c.execute('SELECT coalesce(max(numero),0) FROM ferreteria.ventas').fetchone()[0]
         c.commit()
-    (ROOT/'.artifacts/encrypted-restore-validation.json').write_text(json.dumps({'source':'GitHub encrypted artifact','tables':counts,'stock_reconciled':True,'sequences_valid':True,'auth':'UUID stubs, no passwords'}),encoding='utf-8')
+    (ROOT/'.artifacts/encrypted-restore-validation.json').write_text(json.dumps({'source':Path(encrypted).name,'tables':counts,'stock_reconciled':True,'sequences_valid':True,'auth':'UUID stubs, no passwords'}),encoding='utf-8')
     print('Restauración cifrada validada:',len(counts),'tablas; stock y secuencias correctos.')
 
 if __name__=='__main__':
