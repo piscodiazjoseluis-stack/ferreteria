@@ -4,7 +4,7 @@
 
 - PostgreSQL 17 local: migraciones nuevas desde cero y 53 peticiones API con el rol SQL limitado, sin conexión a datos comerciales reales. La identidad de esos casos se sustituye en el arnés de pruebas.
 - GitHub Actions repite build, lint y pruebas de API con PostgreSQL efímero antes de desplegar. Se corrigió la creación de la carpeta privada de evidencias en una descarga limpia.
-- Supabase Ferreteria: copia comercial V3 previa y restauración de prueba en una base local nueva. Coincidieron 16 ventas, 6 compras y 49 movimientos; el stock concilió con el ledger. La migración remota conservó los datos previos y quedó en revisión 0006.
+- Supabase Ferreteria: copia comercial V3 previa y restauración de prueba en una base local nueva. Coincidieron 16 ventas, 6 compras y 49 movimientos; el stock concilió con el ledger. La migración remota conservó los datos previos y quedó en revisión 0007, incluido el rol de respaldo de solo lectura.
 - API pública: 30 comprobaciones con cuatro inicios de sesión reales. Preparación: 250.5 ml de base y 2.125 g de colorante; venta a crédito S/ 25; abono en efectivo S/ 10; saldo S/ 15. Datos ficticios FINAL-; no se cerró la caja.
 - Navegador público: Gerente, Vendedor, Almacenero y Cajero iniciaron sesión; navegación y cuenta de cliente verificadas; catálogo anónimo a 390 px con WhatsApp sin enviar mensajes y sin desplazamiento horizontal del documento.
 - Navegador local: alta de cliente, alta de fórmula, preparación confirmada, consulta gerencial y revisión de caja cancelada. Sin errores JavaScript en esos recorridos.
@@ -14,7 +14,7 @@
 
 La recuperación Gmail completa conserva la validación previa del titular y no se repitió leyendo el buzón durante este cierre. No se hizo una auditoría externa ni carga masiva. El asesor de seguridad mantiene un aviso de protección de contraseñas filtradas deshabilitada y Alembic cerrada sin políticas de aplicación intencionalmente.
 
-El objetivo tecnológico de respaldo automático se adapta a una copia comercial y restauración comprobadas manualmente. No se configuró una política automática de copia externa ni se contrataron capacidades de pago del proveedor. Es una restricción de continuidad operativa declarada, no un respaldo automático que deba atribuirse al sistema.
+Se implementó un flujo de respaldo comercial cifrado con programación diaria, retención de siete días y una identidad SQL de solo lectura. La exportación, el cifrado, el descifrado y la restauración de sus 22 tablas pasaron localmente. Su ejecución en GitHub sigue pendiente de autorización tras el rechazo de revisión automática «blocked by policy», sin causa detallada. La variable de habilitación permanece sin activar; no se atribuye al sistema un respaldo automático ya operativo. No se contrataron capacidades de pago. El procedimiento y la custodia de la clave privada se describen en respaldo-comercial.md.
 
 El token de CI documentado vence el 23 de noviembre; revisar vigencia antes de otro despliegue. Su caducidad no apaga el sistema publicado. No se implementaron SUNAT, procesamiento bancario, conversiones automáticas de tonos o modo offline. Las reglas acotadas están en la matriz y el manual técnico.
 
