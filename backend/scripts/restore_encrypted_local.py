@@ -18,9 +18,9 @@ def restore(encrypted,private_key,database='ferreteria_encrypted_restore'):
         raise ValueError('Solo se admite un nombre de base local de ensayo con prefijo ferreteria_restore_.')
     payload=decrypt(Path(encrypted).read_bytes(),Path(private_key).read_bytes())
     if payload.get('schema')!='ferreteria' or payload.get('format')!=1:raise ValueError('Formato de copia desconocido.')
-    with psycopg.connect('postgresql://postgres@127.0.0.1:55432/postgres',autocommit=True) as c:
+    with psycopg.connect('postgresql://postgres@127.0.0.1:55432/postgres',autocommit=True,connect_timeout=10) as c:
         c.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(database)))
-    with psycopg.connect('postgresql://postgres@127.0.0.1:55432/'+database) as c:
+    with psycopg.connect('postgresql://postgres@127.0.0.1:55432/'+database,connect_timeout=10) as c:
         c.execute('CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY)')
         files=['backend/migrations/sql/0001_initial.sql','backend/migrations/sql/0002_compras_almacen.sql','backend/migrations/sql/0003_indices_compras.sql','supabase/migrations/20261107164429_operaciones_v3.sql','supabase/migrations/20261121165018_cierre_final.sql','supabase/migrations/20261121172329_endurecimiento_final.sql','supabase/migrations/20261121175846_respaldo_comercial.sql']
         for file in files:

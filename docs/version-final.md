@@ -25,7 +25,7 @@ Docker/Compose y Oracle/Render estaban propuestos, pero no son necesarios en la 
 
 `20261121165018_cierre_final.sql` / Alembic `0005`: conversión exacta de cantidades, tablas nuevas y permisos. La limpieza antigua se retiró del instalador inicial: nunca debe repetirse. Copia privada V3 y prueba de restauración local antes de migrar; usuarios Auth se representan por ID en el ensayo, sin respaldar contraseñas.
 
-Las revisiones `0006` y `0007` completan el endurecimiento de políticas e índices y la identidad SQL de respaldo de solo lectura. El respaldo comercial cifrado se restauró localmente (22 tablas); el flujo remoto permanece deshabilitado mientras se resuelve su autorización. Véase `docs/respaldo-comercial.md`.
+Las revisiones `0006` y `0007` completan el endurecimiento de políticas e índices y la identidad SQL de respaldo de solo lectura. El 28/11/2026 se habilitó el respaldo diario y se verificó la ejecución remota 46159712945, descargando su copia cifrada y restaurando 22 tablas en una base local nueva. Véase `docs/respaldo-comercial.md` para la evidencia, la custodia de la clave y los límites de Auth.
 
 `verify_final.py` prueba la API y RLS contra PostgreSQL real local con identidades sustituidas, sin presentarlas como un login Supabase. Prueba reglas, errores, idempotencia, compras decimales, crédito, abonos, PDF, anulaciones, caja y conciliación del ledger. `verify_restore.py` restaura la copia privada en una base nueva local. El arnés `final_test_app.py` nunca se importa desde `app.main`, ni se publica como entrada de Vercel.
 

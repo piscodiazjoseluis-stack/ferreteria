@@ -19,3 +19,9 @@ Se implementó un flujo de respaldo comercial cifrado con programación diaria, 
 El token de CI documentado vence el 23 de noviembre; revisar vigencia antes de otro despliegue. Su caducidad no apaga el sistema publicado. No se implementaron SUNAT, procesamiento bancario, conversiones automáticas de tonos o modo offline. Las reglas acotadas están en la matriz y el manual técnico.
 
 La entrega incluye manuales PDF, informe Word/PDF, matriz PDF y Markdown, diagramas PDF, comparativo, guion, evidencias y presentación editable exportable a PowerPoint. El archivo de código y el paquete académico se distribuyen sin credenciales.
+
+## Actualización del respaldo del 28 de noviembre de 2026
+
+El estado pendiente descrito arriba corresponde al cierre del 21/11/2026. El titular autorizó su verificación el 28/11/2026. Se reactivó Ferretería y se habilitó el flujo diario. Una primera ejecución detectó que la subida omitía la carpeta oculta de salida; se corrigió esa configuración, manteniendo la selección exclusiva de archivos cifrados `.enc`.
+
+La [ejecución 46159712945](https://github.com/piscodiazjoseluis-stack/ferreteria/actions/runs/46159712945) terminó correctamente. Se descargó y descifró el artefacto y se restauraron 22 tablas en una base local nueva. Coincidieron todos los conteos y se validaron existencias y secuencias. La comparación posterior del origen confirmó que los datos comerciales no cambiaron. Se mantiene la exclusión de credenciales Auth y la clave privada fuera de GitHub. El cron está habilitado; la ejecución comprobada fue manual sobre ese mismo flujo.

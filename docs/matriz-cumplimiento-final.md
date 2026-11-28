@@ -60,5 +60,5 @@
 | SEG02 | Gerente Vendedor Almacenero Cajero | Cumple | Perfiles activos, permisos API y RLS. |
 | SEG03 | Acciones sensibles auditadas | Cumple | Precios/clientes/proveedores/fórmulas/preparaciones/abonos/anulaciones. |
 | SEG04 | Seguridad del catálogo público | Cumple | Rol SQL separado con proyección solo comercial. |
-| INF01 | Respaldo automático y recuperación | Pendiente remoto | Cifrado y restauración local validados; ejecución GitHub pendiente de autorización tras bloqueo de revisión automática. No incluye contraseñas Auth. |
+| INF01 | Respaldo automático y recuperación | Cumple | Actualización 28/11/2026: cron diario habilitado. Ejecución remota 46159712945 correcta; artefacto cifrado descargado y 22 tablas restauradas localmente con conteos, existencias y secuencias conciliados. Origen sin cambios. La ejecución verificada fue manual sobre el mismo flujo. No incluye contraseñas Auth. |
 
