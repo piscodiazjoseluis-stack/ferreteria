@@ -13,10 +13,11 @@ from psycopg import sql
 from backup_business import decrypt
 
 ROOT=Path(__file__).resolve().parents[2]
-def restore(encrypted,private_key):
+def restore(encrypted,private_key,database='ferreteria_encrypted_restore'):
+    if database!='ferreteria_encrypted_restore' and not re.fullmatch(r'ferreteria_restore_[a-z0-9_]{1,40}',database):
+        raise ValueError('Solo se admite un nombre de base local de ensayo con prefijo ferreteria_restore_.')
     payload=decrypt(Path(encrypted).read_bytes(),Path(private_key).read_bytes())
     if payload.get('schema')!='ferreteria' or payload.get('format')!=1:raise ValueError('Formato de copia desconocido.')
-    database='ferreteria_encrypted_restore'
     with psycopg.connect('postgresql://postgres@127.0.0.1:55432/postgres',autocommit=True) as c:
         c.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(database)))
     with psycopg.connect('postgresql://postgres@127.0.0.1:55432/'+database) as c:
@@ -50,8 +51,8 @@ def restore(encrypted,private_key):
         next_sale=c.execute("SELECT nextval('ferreteria.ventas_numero_seq')").fetchone()[0]
         assert next_sale>c.execute('SELECT coalesce(max(numero),0) FROM ferreteria.ventas').fetchone()[0]
         c.commit()
-    (ROOT/'.artifacts/encrypted-restore-validation.json').write_text(json.dumps({'source':Path(encrypted).name,'tables':counts,'stock_reconciled':True,'sequences_valid':True,'auth':'UUID stubs, no passwords'}),encoding='utf-8')
+    (ROOT/'.artifacts/encrypted-restore-validation.json').write_text(json.dumps({'source':Path(encrypted).name,'local_database':database,'tables':counts,'stock_reconciled':True,'sequences_valid':True,'auth':'UUID stubs, no passwords'}),encoding='utf-8')
     print('Restauración cifrada validada:',len(counts),'tablas; stock y secuencias correctos.')
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('encrypted');p.add_argument('private_key');a=p.parse_args();restore(a.encrypted,a.private_key)
+    p=argparse.ArgumentParser();p.add_argument('encrypted');p.add_argument('private_key');p.add_argument('--database',default='ferreteria_encrypted_restore');a=p.parse_args();restore(a.encrypted,a.private_key,a.database)

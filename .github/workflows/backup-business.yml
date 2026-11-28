@@ -27,5 +27,6 @@ jobs:
         with:
           name: ferreteria-cifrada-${{ github.run_id }}
           path: .backup-output/*.enc
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 7
